@@ -1,0 +1,56 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "G:\\All Projects\\Dental Clinic Managment system\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{08B2AC8B-F027-7BED-CAF1-BB12658B536B}|DentalClinicSystem\\DentalClinicSystem.csproj|g:\\all projects\\dental clinic managment system\\dentalclinicsystem\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{08B2AC8B-F027-7BED-CAF1-BB12658B536B}|DentalClinicSystem\\DentalClinicSystem.csproj|solutionrelative:dentalclinicsystem\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{08B2AC8B-F027-7BED-CAF1-BB12658B536B}|DentalClinicSystem\\DentalClinicSystem.csproj|g:\\all projects\\dental clinic managment system\\dentalclinicsystem\\dentalclinicsystem.db||{25834150-CD7E-11D0-92DF-00A0C9138C45}",
+      "RelativeMoniker": "D:0:0:{08B2AC8B-F027-7BED-CAF1-BB12658B536B}|DentalClinicSystem\\DentalClinicSystem.csproj|solutionrelative:dentalclinicsystem\\dentalclinicsystem.db||{25834150-CD7E-11D0-92DF-00A0C9138C45}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{eefa5220-e298-11d0-8f78-00a0c9110057}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "G:\\All Projects\\Dental Clinic Managment system\\DentalClinicSystem\\appsettings.json",
+              "RelativeDocumentMoniker": "DentalClinicSystem\\appsettings.json",
+              "ToolTip": "G:\\All Projects\\Dental Clinic Managment system\\DentalClinicSystem\\appsettings.json",
+              "RelativeToolTip": "DentalClinicSystem\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAACoAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-08-03T11:42:00.358Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "DentalClinicSystem.db",
+              "DocumentMoniker": "G:\\All Projects\\Dental Clinic Managment system\\DentalClinicSystem\\DentalClinicSystem.db",
+              "RelativeDocumentMoniker": "DentalClinicSystem\\DentalClinicSystem.db",
+              "ToolTip": "G:\\All Projects\\Dental Clinic Managment system\\DentalClinicSystem\\DentalClinicSystem.db",
+              "RelativeToolTip": "DentalClinicSystem\\DentalClinicSystem.db",
+              "Icon": "00000000-0000-0000-0000-000000000000.000000|iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAGHSURBVDhPjZPNSxtBGIefXTcSYlv2T1CKWAVFSgsVvClCexBEqteK5yJEl22gheLBD4KCIPpneGwp4hcKNdQqiGDxkNBW8WI\u002BDtltkp2Ml\u002B6iO8b4wMB8/N6HeWFG4z8J20qDbPbXKlrGqzKUTCaPgi0pZTBP2FOyXC7XHAl7Sk5//pSzLKs7KAL0m4t6vBsbNx83RTdvSh4sME2T1ZVlXNc1DV1uhs\u002BVFtZ3f8hvOymlFb8dv065wclZhq/b\u002B2Rzea6yOda\u002BbPHz\u002BDQcC1AEhq7jOC4vutp52d2B4zoYhhILUE48IahUyoiqoCoEXqWC54lwLEARlEolNGBrL8XG7nc0DVIHhzjuv3AU7hI873zGyOAATx7FEJ7g4vKc33//MLe4xOmvs3BcFfgMvenndV8vhXyBmY82\u002BWyWaLQxHKstACgWHQwd3sctIpGGWy/X515BW\u002BtTPsQn6O15xcLcDC3N6le5VwDQFIsx\u002BnY4vB1QV1APzZ8k7Mk0aOod70RmZucXWgCuAZnTw6qHi\u002BiqAAAAAElFTkSuQmCC",
+              "WhenOpened": "2025-08-03T11:41:59.651Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,246 @@
+@model DentalClinicSystem.Models.Service
+@{
+    ViewData["Title"] = "Add New Service";
+    Layout = "_DashboardLayout";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-tooth me-2 text-primary"></i>Add New Service</h2>
+    <a asp-action="Index" class="btn btn-secondary">
+        <i class="fas fa-arrow-left me-2"></i>Back to List
+    </a>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-plus me-2"></i>Service Information</h5>
+            </div>
+            <div class="card-body">
+                <form asp-action="Create" method="post" enctype="multipart/form-data">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                    
+                    <!-- Basic Information -->
+                    <h6 class="text-primary mb-3"><i class="fas fa-info-circle me-2"></i>Basic Information</h6>
+                    <div class="mb-3">
+                        <label asp-for="ServiceName" class="form-label">Service Name *</label>
+                        <input asp-for="ServiceName" class="form-control" placeholder="Enter service name" required />
+                        <span asp-validation-for="ServiceName" class="text-danger"></span>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label asp-for="Description" class="form-label">Description</label>
+                        <textarea asp-for="Description" class="form-control" rows="3" placeholder="Describe the service in detail..."></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Category" class="form-label">Category *</label>
+                            <select asp-for="Category" class="form-select" required>
+                                <option value="">Select Category</option>
+                                <option value="General">General Dentistry</option>
+                                <option value="Cosmetic">Cosmetic Dentistry</option>
+                                <option value="Orthodontics">Orthodontics</option>
+                                <option value="Surgery">Oral Surgery</option>
+                                <option value="Preventive">Preventive Care</option>
+                                <option value="Restorative">Restorative Dentistry</option>
+                                <option value="Endodontics">Endodontics</option>
+                                <option value="Periodontics">Periodontics</option>
+                                <option value="Prosthodontics">Prosthodontics</option>
+                                <option value="Pediatric">Pediatric Dentistry</option>
+                            </select>
+                            <span asp-validation-for="Category" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Duration" class="form-label">Duration (minutes) *</label>
+                            <input asp-for="Duration" type="number" min="15" max="480" step="15" class="form-control" placeholder="60" required />
+                            <div class="form-text">Duration in minutes (15-480)</div>
+                            <span asp-validation-for="Duration" class="text-danger"></span>
+                        </div>
+                    </div>
+                    
+                    <!-- Pricing Information -->
+                    <h6 class="text-primary mb-3 mt-4"><i class="fas fa-dollar-sign me-2"></i>Pricing Information</h6>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Price" class="form-label">Price ($) *</label>
+                            <input asp-for="Price" type="number" step="0.01" min="0" class="form-control" placeholder="0.00" required />
+                            <span asp-validation-for="Price" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Insurance Coverage</label>
+                            <select class="form-select" name="InsuranceCoverage">
+                                <option value="">Not Covered</option>
+                                <option value="Partial">Partially Covered</option>
+                                <option value="Full">Fully Covered</option>
+                            </select>
+                            <div class="form-text">Insurance coverage status</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Additional Settings -->
+                    <h6 class="text-primary mb-3 mt-4"><i class="fas fa-cogs me-2"></i>Additional Settings</h6>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="form-check">
+                                <input asp-for="IsActive" class="form-check-input" type="checkbox" checked />
+                                <label asp-for="IsActive" class="form-check-label">
+                                    Active Service
+                                </label>
+                            </div>
+                            <div class="form-text">Check this box if the service is currently available</div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="RequiresConsultation" />
+                                <label class="form-check-label">
+                                    Requires Consultation
+                                </label>
+                            </div>
+                            <div class="form-text">Check if consultation is required before treatment</div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Prerequisites</label>
+                        <textarea class="form-control" rows="2" name="Prerequisites" placeholder="Any prerequisites or requirements for this service..."></textarea>
+                        <div class="form-text">List any requirements or conditions</div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-end">
+                        <a asp-action="Index" class="btn btn-secondary me-2">Cancel</a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>Save Service
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>Service Guidelines</h6>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <h6><i class="fas fa-lightbulb me-2"></i>Tips:</h6>
+                    <ul class="mb-0 small">
+                        <li>Use clear, descriptive service names</li>
+                        <li>Set realistic duration estimates</li>
+                        <li>Include detailed descriptions</li>
+                        <li>Choose appropriate categories</li>
+                        <li>Set competitive pricing</li>
+                    </ul>
+                </div>
+                
+                <div class="alert alert-success">
+                    <h6><i class="fas fa-tooth me-2"></i>Common Services:</h6>
+                    <ul class="mb-0 small">
+                        <li>Dental Cleaning - 60 min</li>
+                        <li>Tooth Filling - 45 min</li>
+                        <li>Root Canal - 90 min</li>
+                        <li>Tooth Extraction - 30 min</li>
+                        <li>Dental Crown - 120 min</li>
+                        <li>Teeth Whitening - 90 min</li>
+                    </ul>
+                </div>
+                
+                <div class="alert alert-warning">
+                    <h6><i class="fas fa-exclamation-triangle me-2"></i>Important:</h6>
+                    <ul class="mb-0 small">
+                        <li>Verify pricing with market rates</li>
+                        <li>Consider material costs</li>
+                        <li>Account for complexity levels</li>
+                        <li>Update insurance information</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="fas fa-calculator me-2"></i>Pricing Calculator</h6>
+            </div>
+            <div class="card-body">
+                <div class="mb-2">
+                    <label class="form-label small">Material Cost ($)</label>
+                    <input type="number" id="materialCost" class="form-control form-control-sm" placeholder="0.00" step="0.01">
+                </div>
+                <div class="mb-2">
+                    <label class="form-label small">Labor Cost ($)</label>
+                    <input type="number" id="laborCost" class="form-control form-control-sm" placeholder="0.00" step="0.01">
+                </div>
+                <div class="mb-2">
+                    <label class="form-label small">Overhead (%)</label>
+                    <input type="number" id="overhead" class="form-control form-control-sm" placeholder="20" min="0" max="100">
+                </div>
+                <div class="mb-2">
+                    <label class="form-label small">Profit Margin (%)</label>
+                    <input type="number" id="profit" class="form-control form-control-sm" placeholder="30" min="0" max="100">
+                </div>
+                <button type="button" class="btn btn-sm btn-outline-primary w-100" onclick="calculatePrice()">
+                    Calculate Suggested Price
+                </button>
+                <div id="suggestedPrice" class="mt-2 text-center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        function calculatePrice() {
+            const materialCost = parseFloat(document.getElementById('materialCost').value) || 0;
+            const laborCost = parseFloat(document.getElementById('laborCost').value) || 0;
+            const overhead = parseFloat(document.getElementById('overhead').value) || 0;
+            const profit = parseFloat(document.getElementById('profit').value) || 0;
+            
+            const baseCost = materialCost + laborCost;
+            const overheadAmount = baseCost * (overhead / 100);
+            const totalCost = baseCost + overheadAmount;
+            const profitAmount = totalCost * (profit / 100);
+            const suggestedPrice = totalCost + profitAmount;
+            
+            document.getElementById('suggestedPrice').innerHTML = 
+                `<strong class="text-success">Suggested Price: $${suggestedPrice.toFixed(2)}</strong>`;
+            
+            // Update the main price field
+            document.querySelector('input[name="Price"]').value = suggestedPrice.toFixed(2);
+        }
+        
+        // Auto-suggest duration based on category
+        document.addEventListener('DOMContentLoaded', function() {
+            const categorySelect = document.querySelector('select[name="Category"]');
+            const durationInput = document.querySelector('input[name="Duration"]');
+            
+            const durationSuggestions = {
+                'General': 60,
+                'Cosmetic': 90,
+                'Orthodontics': 45,
+                'Surgery': 120,
+                'Preventive': 45,
+                'Restorative': 75,
+                'Endodontics': 90,
+                'Periodontics': 60,
+                'Prosthodontics': 120,
+                'Pediatric': 30
+            };
+            
+            categorySelect.addEventListener('change', function() {
+                const category = this.value;
+                if (category && durationSuggestions[category] && !durationInput.value) {
+                    durationInput.value = durationSuggestions[category];
+                }
+            });
+        });
+    </script>
+}

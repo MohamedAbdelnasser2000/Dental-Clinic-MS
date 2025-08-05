@@ -1,0 +1,108 @@
+@model DentalClinicSystem.Models.Prescription
+@{
+    ViewData["Title"] = "Edit Prescription";
+    Layout = "_DashboardLayout";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-edit me-2 text-warning"></i>Edit Prescription</h2>
+    <a asp-action="Index" class="btn btn-secondary">
+        <i class="fas fa-arrow-left me-2"></i>Back to List
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0"><i class="fas fa-prescription-bottle-alt me-2"></i>Prescription Information</h5>
+    </div>
+    <div class="card-body">
+        <form asp-action="Edit" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+            
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger">
+                    @TempData["ErrorMessage"]
+                </div>
+            }
+            
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success">
+                    @TempData["SuccessMessage"]
+                </div>
+            }
+            
+            <input type="hidden" asp-for="PrescriptionId" />
+            <input type="hidden" asp-for="CreatedAt" />
+            
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="PatientId" class="form-label">Patient *</label>
+                    @Html.DropDownListFor(m => m.PatientId, ViewBag.Patients as SelectList, "Select Patient", new { @class = "form-select", @required = "required" })
+                    <span asp-validation-for="PatientId" class="text-danger"></span>
+                </div>
+                
+                <div class="col-md-6 mb-3">
+                    <label asp-for="DentistId" class="form-label">Dentist *</label>
+                    @Html.DropDownListFor(m => m.DentistId, ViewBag.Dentists as SelectList, "Select Dentist", new { @class = "form-select", @required = "required" })
+                    <span asp-validation-for="DentistId" class="text-danger"></span>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="PrescriptionDate" class="form-label">Prescription Date *</label>
+                    <input asp-for="PrescriptionDate" type="date" class="form-control" required />
+                    <span asp-validation-for="PrescriptionDate" class="text-danger"></span>
+                </div>
+                
+                <div class="col-md-6 mb-3">
+                    <label asp-for="TreatmentId" class="form-label">Treatment (Optional)</label>
+                    @Html.DropDownListFor(m => m.TreatmentId, ViewBag.Treatments as SelectList, "Select Treatment", new { @class = "form-select" })
+                    <span asp-validation-for="TreatmentId" class="text-danger"></span>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Medication" class="form-label">Medication *</label>
+                    <input asp-for="Medication" class="form-control" placeholder="Enter medication name" required />
+                    <span asp-validation-for="Medication" class="text-danger"></span>
+                </div>
+                
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Dosage" class="form-label">Dosage *</label>
+                    <input asp-for="Dosage" class="form-control" placeholder="e.g., 500mg twice daily" required />
+                    <span asp-validation-for="Dosage" class="text-danger"></span>
+                </div>
+            </div>
+            
+            <div class="mb-3">
+                <label asp-for="Instructions" class="form-label">Instructions</label>
+                <textarea asp-for="Instructions" class="form-control" rows="3" placeholder="Instructions for taking the medication..."></textarea>
+                <span asp-validation-for="Instructions" class="text-danger"></span>
+                <div class="form-text">Provide detailed instructions on how to take the medication.</div>
+            </div>
+            
+            <div class="mb-3">
+                <label asp-for="Notes" class="form-label">Notes</label>
+                <textarea asp-for="Notes" class="form-control" rows="2" placeholder="Additional notes..."></textarea>
+                <span asp-validation-for="Notes" class="text-danger"></span>
+            </div>
+            
+            <div class="d-flex justify-content-between">
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="fas fa-times me-2"></i>Cancel
+                </a>
+                <button type="submit" class="btn btn-warning">
+                    <i class="fas fa-save me-2"></i>Update Prescription
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

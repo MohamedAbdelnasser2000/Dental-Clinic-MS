@@ -1,0 +1,294 @@
+@{
+    ViewData["Title"] = "الإعدادات";
+    Layout = "_DashboardLayout";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-cog me-2 text-primary"></i>الإعدادات</h2>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">الرئيسية</a></li>
+                <li class="breadcrumb-item active">الإعدادات</li>
+            </ol>
+        </nav>
+    </div>
+
+    <div class="row">
+        <!-- Account Settings -->
+        <div class="col-lg-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-user-cog me-2"></i>إعدادات الحساب</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        <a href="@Url.Action("Profile", "Account")" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1"><i class="fas fa-user-edit me-2"></i>الملف الشخصي</h6>
+                                <small><i class="fas fa-chevron-right"></i></small>
+                            </div>
+                            <p class="mb-1">تحديث المعلومات الشخصية والمهنية</p>
+                        </a>
+                        
+                        <a href="#" class="list-group-item list-group-item-action" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1"><i class="fas fa-key me-2"></i>تغيير كلمة المرور</h6>
+                                <small><i class="fas fa-chevron-right"></i></small>
+                            </div>
+                            <p class="mb-1">تحديث كلمة المرور الخاصة بك</p>
+                        </a>
+                        
+                        <a href="#" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1"><i class="fas fa-shield-alt me-2"></i>الأمان</h6>
+                                <small><i class="fas fa-chevron-right"></i></small>
+                            </div>
+                            <p class="mb-1">إعدادات الأمان والخصوصية</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Settings -->
+        <div class="col-lg-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-cogs me-2"></i>إعدادات النظام</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1"><i class="fas fa-bell me-2"></i>الإشعارات</h6>
+                                    <p class="mb-1">تفعيل أو إلغاء الإشعارات</p>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="notificationsSwitch" checked>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1"><i class="fas fa-envelope me-2"></i>إشعارات البريد الإلكتروني</h6>
+                                    <p class="mb-1">استقبال الإشعارات عبر البريد الإلكتروني</p>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="emailNotificationsSwitch" checked>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1"><i class="fas fa-moon me-2"></i>الوضع المظلم</h6>
+                                    <p class="mb-1">تفعيل الوضع المظلم للواجهة</p>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="darkModeSwitch">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Clinic Settings (Admin Only) -->
+        @if (User.IsInRole("Admin"))
+        {
+            <div class="col-lg-6 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-clinic-medical me-2"></i>إعدادات العيادة</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="list-group list-group-flush">
+                            <a href="#" class="list-group-item list-group-item-action">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1"><i class="fas fa-info-circle me-2"></i>معلومات العيادة</h6>
+                                    <small><i class="fas fa-chevron-right"></i></small>
+                                </div>
+                                <p class="mb-1">تحديث معلومات العيادة الأساسية</p>
+                            </a>
+                            
+                            <a href="#" class="list-group-item list-group-item-action">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1"><i class="fas fa-clock me-2"></i>أوقات العمل</h6>
+                                    <small><i class="fas fa-chevron-right"></i></small>
+                                </div>
+                                <p class="mb-1">تحديد أوقات العمل والإجازات</p>
+                            </a>
+                            
+                            <a href="#" class="list-group-item list-group-item-action">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1"><i class="fas fa-database me-2"></i>النسخ الاحتياطي</h6>
+                                    <small><i class="fas fa-chevron-right"></i></small>
+                                </div>
+                                <p class="mb-1">إدارة النسخ الاحتياطية للبيانات</p>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <!-- Help & Support -->
+        <div class="col-lg-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-question-circle me-2"></i>المساعدة والدعم</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        <a href="#" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1"><i class="fas fa-book me-2"></i>دليل المستخدم</h6>
+                                <small><i class="fas fa-external-link-alt"></i></small>
+                            </div>
+                            <p class="mb-1">تعلم كيفية استخدام النظام</p>
+                        </a>
+                        
+                        <a href="#" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1"><i class="fas fa-headset me-2"></i>الدعم الفني</h6>
+                                <small><i class="fas fa-external-link-alt"></i></small>
+                            </div>
+                            <p class="mb-1">تواصل مع فريق الدعم الفني</p>
+                        </a>
+                        
+                        <a href="#" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1"><i class="fas fa-info me-2"></i>حول النظام</h6>
+                                <small><i class="fas fa-chevron-right"></i></small>
+                            </div>
+                            <p class="mb-1">معلومات حول إصدار النظام</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Change Password Modal -->
+<div class="modal fade" id="changePasswordModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fas fa-key me-2"></i>تغيير كلمة المرور</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="changePasswordForm">
+                    <div class="mb-3">
+                        <label for="currentPassword" class="form-label">كلمة المرور الحالية</label>
+                        <input type="password" class="form-control" id="currentPassword" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newPassword" class="form-label">كلمة المرور الجديدة</label>
+                        <input type="password" class="form-control" id="newPassword" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="confirmPassword" class="form-label">تأكيد كلمة المرور الجديدة</label>
+                        <input type="password" class="form-control" id="confirmPassword" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                <button type="button" class="btn btn-primary" onclick="changePassword()">تغيير كلمة المرور</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Settings toggles
+        document.getElementById('notificationsSwitch').addEventListener('change', function() {
+            // Save notification preference
+            console.log('Notifications:', this.checked);
+        });
+
+        document.getElementById('emailNotificationsSwitch').addEventListener('change', function() {
+            // Save email notification preference
+            console.log('Email Notifications:', this.checked);
+        });
+
+        document.getElementById('darkModeSwitch').addEventListener('change', function() {
+            // Toggle dark mode
+            console.log('Dark Mode:', this.checked);
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+            } else {
+                document.body.classList.remove('dark-mode');
+            }
+        });
+
+        function changePassword() {
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (newPassword !== confirmPassword) {
+                alert('كلمة المرور الجديدة وتأكيدها غير متطابقين');
+                return;
+            }
+
+            // Here you would make an AJAX call to change the password
+            console.log('Changing password...');
+            
+            // Close modal and show success message
+            const modal = bootstrap.Modal.getInstance(document.getElementById('changePasswordModal'));
+            modal.hide();
+            
+            // Show success toast or alert
+            alert('تم تغيير كلمة المرور بنجاح');
+        }
+    </script>
+}
+
+@section Styles {
+    <style>
+        .card {
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            border: 1px solid rgba(0, 0, 0, 0.125);
+            transition: box-shadow 0.15s ease-in-out;
+        }
+        
+        .card:hover {
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        }
+        
+        .list-group-item-action:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .form-check-input:checked {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+        }
+        
+        .dark-mode {
+            background-color: #1a1a1a;
+            color: #ffffff;
+        }
+        
+        .dark-mode .card {
+            background-color: #2d2d2d;
+            border-color: #404040;
+        }
+        
+        .dark-mode .list-group-item {
+            background-color: #2d2d2d;
+            border-color: #404040;
+            color: #ffffff;
+        }
+    </style>
+}

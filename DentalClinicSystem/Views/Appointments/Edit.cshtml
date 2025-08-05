@@ -1,0 +1,183 @@
+@model DentalClinicSystem.Models.Appointment
+@{
+    ViewData["Title"] = "Edit Appointment";
+    Layout = "_DashboardLayout";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-edit me-2 text-warning"></i>Edit Appointment</h2>
+    <a asp-action="Index" class="btn btn-secondary">
+        <i class="fas fa-arrow-left me-2"></i>Back to List
+    </a>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-calendar-edit me-2"></i>Appointment Information</h5>
+            </div>
+            <div class="card-body">
+                <form asp-action="Edit" method="post">
+                    <input type="hidden" asp-for="AppointmentId" />
+                    <input type="hidden" asp-for="CreatedAt" />
+                    <input type="hidden" asp-for="CreatedByUserId" />
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="PatientId" class="form-label">Patient *</label>
+                            @Html.DropDownListFor(m => m.PatientId, ViewBag.Patients as SelectList, "Select Patient", new { @class = "form-select", @required = "required" })
+                            <span asp-validation-for="PatientId" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="DentistId" class="form-label">Dentist *</label>
+                            @Html.DropDownListFor(m => m.DentistId, ViewBag.Dentists as SelectList, "Select Dentist", new { @class = "form-select", @required = "required" })
+                            <span asp-validation-for="DentistId" class="text-danger"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="AppointmentDate" class="form-label">Appointment Date *</label>
+                            <input asp-for="AppointmentDate" type="date" class="form-control" required />
+                            <span asp-validation-for="AppointmentDate" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="col-md-3 mb-3">
+                            <label asp-for="StartTime" class="form-label">Start Time *</label>
+                            <input asp-for="StartTime" type="time" class="form-control" required />
+                            <span asp-validation-for="StartTime" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="col-md-3 mb-3">
+                            <label asp-for="EndTime" class="form-label">End Time *</label>
+                            <input asp-for="EndTime" type="time" class="form-control" required />
+                            <span asp-validation-for="EndTime" class="text-danger"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Status" class="form-label">Status *</label>
+                            <select asp-for="Status" class="form-select" required>
+                                <option value="">Select Status</option>
+                                <option value="مؤكد">مؤكد (Confirmed)</option>
+                                <option value="معلق">معلق (Pending)</option>
+                                <option value="مكتمل">مكتمل (Completed)</option>
+                                <option value="ملغي">ملغي (Cancelled)</option>
+                            </select>
+                            <span asp-validation-for="Status" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="ServiceId" class="form-label">Service</label>
+                            @Html.DropDownListFor(m => m.ServiceId, ViewBag.Services as SelectList, "Select Service (Optional)", new { @class = "form-select" })
+                            <span asp-validation-for="ServiceId" class="text-danger"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label asp-for="ReasonForVisit" class="form-label">Reason for Visit</label>
+                        <input asp-for="ReasonForVisit" class="form-control" placeholder="Brief description of the visit reason" />
+                        <span asp-validation-for="ReasonForVisit" class="text-danger"></span>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label asp-for="Notes" class="form-label">Notes</label>
+                        <textarea asp-for="Notes" class="form-control" rows="3" placeholder="Additional notes about the appointment..."></textarea>
+                        <span asp-validation-for="Notes" class="text-danger"></span>
+                    </div>
+                    
+                    <div class="d-flex justify-content-end">
+                        <a asp-action="Details" asp-route-id="@Model.AppointmentId" class="btn btn-secondary me-2">Cancel</a>
+                        <button type="submit" class="btn btn-warning">
+                            <i class="fas fa-save me-2"></i>Update Appointment
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>Edit Guidelines</h6>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <h6><i class="fas fa-lightbulb me-2"></i>Tips:</h6>
+                    <ul class="mb-0 small">
+                        <li>Check for scheduling conflicts before saving</li>
+                        <li>Verify patient and dentist availability</li>
+                        <li>Update status appropriately</li>
+                        <li>Add relevant notes for future reference</li>
+                        <li>Ensure time slots are realistic</li>
+                    </ul>
+                </div>
+                
+                <div class="alert alert-warning">
+                    <h6><i class="fas fa-exclamation-triangle me-2"></i>Important:</h6>
+                    <p class="mb-0 small">Changes to confirmed appointments may require patient notification. Consider the impact on the schedule.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="fas fa-history me-2"></i>Appointment History</h6>
+            </div>
+            <div class="card-body">
+                <p class="small mb-1"><strong>Created:</strong> @Model.CreatedAt.ToString("MMM dd, yyyy hh:mm tt")</p>
+                <p class="small mb-1"><strong>Created By:</strong> @(Model.CreatedByUser?.FullName ?? "System")</p>
+                @if (Model.UpdatedAt.HasValue)
+                {
+                    <p class="small mb-0"><strong>Last Updated:</strong> @(Model.UpdatedAt?.ToString("MMM dd, yyyy hh:mm tt") ?? "N/A")</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Auto-calculate end time when start time changes
+            const startTimeInput = document.querySelector('input[name="StartTime"]');
+            const endTimeInput = document.querySelector('input[name="EndTime"]');
+            
+            if (startTimeInput && endTimeInput) {
+                startTimeInput.addEventListener('change', function() {
+                    if (this.value && !endTimeInput.value) {
+                        const startTime = new Date('2000-01-01 ' + this.value);
+                        const endTime = new Date(startTime.getTime() + 30 * 60000); // Add 30 minutes
+                        endTimeInput.value = endTime.toTimeString().slice(0, 5);
+                    }
+                });
+            }
+            
+            // Validate end time is after start time
+            function validateTimes() {
+                if (startTimeInput.value && endTimeInput.value) {
+                    const startTime = new Date('2000-01-01 ' + startTimeInput.value);
+                    const endTime = new Date('2000-01-01 ' + endTimeInput.value);
+                    
+                    if (endTime <= startTime) {
+                        endTimeInput.setCustomValidity('End time must be after start time');
+                    } else {
+                        endTimeInput.setCustomValidity('');
+                    }
+                }
+            }
+            
+            if (startTimeInput && endTimeInput) {
+                startTimeInput.addEventListener('change', validateTimes);
+                endTimeInput.addEventListener('change', validateTimes);
+            }
+        });
+    </script>
+}

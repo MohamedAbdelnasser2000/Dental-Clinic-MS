@@ -1,0 +1,212 @@
+@model DentalClinicSystem.Models.Appointment
+@{
+    ViewData["Title"] = "Appointment Details";
+    Layout = "_DashboardLayout";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-calendar-check me-2 text-primary"></i>Appointment Details</h2>
+    <div>
+        <a asp-action="Edit" asp-route-id="@Model.AppointmentId" class="btn btn-warning me-2">
+            <i class="fas fa-edit me-2"></i>Edit
+        </a>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Back to List
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Appointment Information</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Patient:</label>
+                        <p class="form-control-plaintext">@Model.Patient?.FullName</p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Dentist:</label>
+                        <p class="form-control-plaintext">@Model.Dentist?.FullName</p>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Date:</label>
+                        <p class="form-control-plaintext">@Model.AppointmentDate.ToString("dddd, MMMM dd, yyyy")</p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Time:</label>
+                        <p class="form-control-plaintext">@Model.StartTime.ToString(@"hh\:mm") - @Model.EndTime.ToString(@"hh\:mm")</p>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Status:</label>
+                        <p class="form-control-plaintext">
+                            @if (Model.Status == "مؤكد")
+                            {
+                                <span class="badge bg-success">@Model.Status</span>
+                            }
+                            else if (Model.Status == "معلق")
+                            {
+                                <span class="badge bg-warning">@Model.Status</span>
+                            }
+                            else if (Model.Status == "ملغي")
+                            {
+                                <span class="badge bg-danger">@Model.Status</span>
+                            }
+                            else if (Model.Status == "مكتمل")
+                            {
+                                <span class="badge bg-info">@Model.Status</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">@Model.Status</span>
+                            }
+                        </p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Service:</label>
+                        <p class="form-control-plaintext">@(Model.Service?.ServiceName ?? "N/A")</p>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <label class="form-label fw-bold">Reason for Visit:</label>
+                        <p class="form-control-plaintext">@(Model.ReasonForVisit ?? "N/A")</p>
+                    </div>
+                </div>
+                
+                @if (!string.IsNullOrEmpty(Model.Notes))
+                {
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label fw-bold">Notes:</label>
+                            <p class="form-control-plaintext">@Model.Notes</p>
+                        </div>
+                    </div>
+                }
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Created At:</label>
+                        <p class="form-control-plaintext">@Model.CreatedAt.ToString("MMM dd, yyyy hh:mm tt")</p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Created By:</label>
+                        <p class="form-control-plaintext">@(Model.CreatedByUser?.FullName ?? "System")</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="fas fa-user me-2"></i>Patient Information</h6>
+            </div>
+            <div class="card-body">
+                @if (Model.Patient != null)
+                {
+                    <p><strong>Name:</strong> @Model.Patient.FullName</p>
+                    <p><strong>Phone:</strong> @Model.Patient.PhoneNumber</p>
+                    <p><strong>Email:</strong> @Model.Patient.Email</p>
+                    <a asp-controller="Patients" asp-action="Details" asp-route-id="@Model.Patient.PatientId" class="btn btn-sm btn-outline-primary">
+                        <i class="fas fa-eye me-1"></i>View Patient Details
+                    </a>
+                }
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="fas fa-user-md me-2"></i>Dentist Information</h6>
+            </div>
+            <div class="card-body">
+                @if (Model.Dentist != null)
+                {
+                    <p><strong>Name:</strong> @Model.Dentist.FullName</p>
+                    <p><strong>Specialization:</strong> @Model.Dentist.Specialization</p>
+                    <p><strong>Phone:</strong> @Model.Dentist.Phone</p>
+                    <a asp-controller="Dentists" asp-action="Details" asp-route-id="@Model.Dentist.DentistId" class="btn btn-sm btn-outline-primary">
+                        <i class="fas fa-eye me-1"></i>View Dentist Details
+                    </a>
+                }
+            </div>
+        </div>
+        
+        @if (Model.Treatments != null && Model.Treatments.Any())
+        {
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="fas fa-procedures me-2"></i>Related Treatments</h6>
+                </div>
+                <div class="card-body">
+                    @foreach (var treatment in Model.Treatments)
+                    {
+                        <div class="border-bottom pb-2 mb-2">
+                            <p class="mb-1"><strong>@treatment.TreatmentType</strong></p>
+                            <p class="mb-1 text-muted small">@treatment.TreatmentDate.ToString("MMM dd, yyyy")</p>
+                            <p class="mb-0 text-muted small">Status: @treatment.Status</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="row mt-3">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="fas fa-cogs me-2"></i>Actions</h6>
+            </div>
+            <div class="card-body">
+                <div class="btn-group" role="group">
+                    <a asp-action="Edit" asp-route-id="@Model.AppointmentId" class="btn btn-warning">
+                        <i class="fas fa-edit me-2"></i>Edit Appointment
+                    </a>
+                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                        <i class="fas fa-trash me-2"></i>Delete Appointment
+                    </button>
+                    @if (Model.Status != "مكتمل")
+                    {
+                        <a asp-controller="Treatments" asp-action="Create" asp-route-appointmentId="@Model.AppointmentId" class="btn btn-success">
+                            <i class="fas fa-plus me-2"></i>Add Treatment
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete this appointment? This action cannot be undone.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form asp-action="Delete" asp-route-id="@Model.AppointmentId" method="post" class="d-inline">
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

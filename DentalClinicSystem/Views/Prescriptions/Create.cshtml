@@ -1,0 +1,124 @@
+@model DentalClinicSystem.Models.Prescription
+@{
+    ViewData["Title"] = "Add New Prescription";
+    Layout = "_DashboardLayout";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-prescription-bottle me-2 text-primary"></i>Add New Prescription</h2>
+    <a asp-action="Index" class="btn btn-secondary">
+        <i class="fas fa-arrow-left me-2"></i>Back to List
+    </a>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-prescription-bottle me-2"></i>Prescription Information</h5>
+            </div>
+            <div class="card-body">
+                <form asp-action="Create" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="PatientId" class="form-label">Patient *</label>
+                            @Html.DropDownListFor(m => m.PatientId, ViewBag.Patients as SelectList, "Select Patient", new { @class = "form-select", @required = "required" })
+                            <span asp-validation-for="PatientId" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="DentistId" class="form-label">Dentist *</label>
+                            @Html.DropDownListFor(m => m.DentistId, ViewBag.Dentists as SelectList, "Select Dentist", new { @class = "form-select", @required = "required" })
+                            <span asp-validation-for="DentistId" class="text-danger"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="PrescriptionDate" class="form-label">Prescription Date *</label>
+                            <input asp-for="PrescriptionDate" type="date" class="form-control" required />
+                            <span asp-validation-for="PrescriptionDate" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Medication" class="form-label">Medication *</label>
+                            <input asp-for="Medication" class="form-control" placeholder="Enter medication name" required />
+                            <span asp-validation-for="Medication" class="text-danger"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label asp-for="Dosage" class="form-label">Dosage *</label>
+                        <input asp-for="Dosage" class="form-control" placeholder="e.g., 500mg twice daily" required />
+                        <span asp-validation-for="Dosage" class="text-danger"></span>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label asp-for="Instructions" class="form-label">Instructions</label>
+                        <textarea asp-for="Instructions" class="form-control" rows="3" placeholder="Instructions for taking the medication..."></textarea>
+                        <span asp-validation-for="Instructions" class="text-danger"></span>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label asp-for="Notes" class="form-label">Additional Notes</label>
+                        <textarea asp-for="Notes" class="form-control" rows="3" placeholder="Any additional notes or warnings..."></textarea>
+                        <span asp-validation-for="Notes" class="text-danger"></span>
+                    </div>
+                    
+                    <div class="d-flex justify-content-end">
+                        <a asp-action="Index" class="btn btn-secondary me-2">Cancel</a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>Save Prescription
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>Prescription Guidelines</h6>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <h6><i class="fas fa-pills me-2"></i>Common Medications:</h6>
+                    <ul class="mb-0 small">
+                        <li>Amoxicillin - Antibiotic</li>
+                        <li>Ibuprofen - Pain relief</li>
+                        <li>Acetaminophen - Pain/fever</li>
+                        <li>Chlorhexidine - Mouthwash</li>
+                        <li>Lidocaine - Local anesthetic</li>
+                    </ul>
+                </div>
+                
+                <div class="alert alert-warning">
+                    <h6><i class="fas fa-exclamation-triangle me-2"></i>Important:</h6>
+                    <ul class="mb-0 small">
+                        <li>Check patient allergies</li>
+                        <li>Verify dosage carefully</li>
+                        <li>Include clear instructions</li>
+                        <li>Note any contraindications</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        // Set default date to today
+        document.addEventListener('DOMContentLoaded', function() {
+            const dateInput = document.querySelector('input[type="date"]');
+            if (dateInput && !dateInput.value) {
+                dateInput.value = new Date().toISOString().split('T')[0];
+            }
+        });
+    </script>
+}

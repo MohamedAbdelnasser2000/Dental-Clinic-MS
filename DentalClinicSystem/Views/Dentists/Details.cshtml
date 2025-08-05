@@ -1,0 +1,178 @@
+@model DentalClinicSystem.Models.Dentist
+@{
+    ViewData["Title"] = "تفاصيل الطبيب";
+    Layout = "_DashboardLayout";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-user-md me-2"></i>تفاصيل الطبيب
+                    </h5>
+                    <div>
+                        <a asp-action="Edit" asp-route-id="@Model.DentistId" class="btn btn-warning btn-sm">
+                            <i class="fas fa-edit me-1"></i>تعديل
+                        </a>
+                        <a asp-action="Index" class="btn btn-secondary btn-sm">
+                            <i class="fas fa-arrow-left me-1"></i>العودة للقائمة
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <!-- Personal Information -->
+                        <div class="col-md-6">
+                            <h6 class="text-primary mb-3">
+                                <i class="fas fa-user me-2"></i>المعلومات الشخصية
+                            </h6>
+                            <div class="row mb-2">
+                                <div class="col-4"><strong>الاسم الأول:</strong></div>
+                                <div class="col-8">@Model.FirstName</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-4"><strong>الاسم الأخير:</strong></div>
+                                <div class="col-8">@Model.LastName</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-4"><strong>الاسم الكامل:</strong></div>
+                                <div class="col-8">@Model.FullName</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-4"><strong>تاريخ الميلاد:</strong></div>
+                                <div class="col-8">@Model.DateOfBirth?.ToString("dd/MM/yyyy")</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-4"><strong>الجنس:</strong></div>
+                                <div class="col-8">
+                                    @if (Model.Gender == "Male")
+                                    {
+                                        <span class="badge bg-primary">ذكر</span>
+                                    }
+                                    else if (Model.Gender == "Female")
+                                    {
+                                        <span class="badge bg-pink">أنثى</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">غير محدد</span>
+                                    }
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-4"><strong>العنوان:</strong></div>
+                                <div class="col-8">@Model.Address</div>
+                            </div>
+                        </div>
+
+                        <!-- Contact Information -->
+                        <div class="col-md-6">
+                            <h6 class="text-primary mb-3">
+                                <i class="fas fa-phone me-2"></i>معلومات الاتصال
+                            </h6>
+                            <div class="row mb-2">
+                                <div class="col-4"><strong>البريد الإلكتروني:</strong></div>
+                                <div class="col-8">
+                                    <a href="mailto:@Model.Email">@Model.Email</a>
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-4"><strong>رقم الهاتف:</strong></div>
+                                <div class="col-8">
+                                    <a href="tel:@Model.Phone">@Model.Phone</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <div class="row">
+                        <!-- Professional Information -->
+                        <div class="col-md-6">
+                            <h6 class="text-success mb-3">
+                                <i class="fas fa-stethoscope me-2"></i>المعلومات المهنية
+                            </h6>
+                            <div class="row mb-2">
+                                <div class="col-4"><strong>التخصص:</strong></div>
+                                <div class="col-8">
+                                    <span class="badge bg-success">@Model.Specialization</span>
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-4"><strong>رقم الترخيص:</strong></div>
+                                <div class="col-8">@Model.LicenseNumber</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-4"><strong>سنوات الخبرة:</strong></div>
+                                <div class="col-8">
+                                    <span class="badge bg-info">@Model.YearsOfExperience سنة</span>
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-4"><strong>تاريخ الانضمام:</strong></div>
+                                <div class="col-8">@Model.JoinDate.ToString("dd/MM/yyyy")</div>
+                            </div>
+                        </div>
+
+                        <!-- Status and Qualifications -->
+                        <div class="col-md-6">
+                            <h6 class="text-info mb-3">
+                                <i class="fas fa-certificate me-2"></i>المؤهلات والحالة
+                            </h6>
+                            <div class="row mb-2">
+                                <div class="col-4"><strong>الحالة:</strong></div>
+                                <div class="col-8">
+                                    @if (Model.IsActive)
+                                    {
+                                        <span class="badge bg-success">نشط</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">غير نشط</span>
+                                    }
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-4"><strong>المؤهلات:</strong></div>
+                                <div class="col-8">
+                                    @if (!string.IsNullOrEmpty(Model.Qualifications))
+                                    {
+                                        <div class="text-muted">@Model.Qualifications</div>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">لا توجد مؤهلات مسجلة</span>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.PhotoPath))
+                    {
+                        <hr class="my-4">
+                        <div class="row">
+                            <div class="col-12">
+                                <h6 class="text-primary mb-3">
+                                    <i class="fas fa-image me-2"></i>الصورة الشخصية
+                                </h6>
+                                <div class="text-center">
+                                    <img src="@Model.PhotoPath" alt="صورة الطبيب" class="img-thumbnail" style="max-width: 200px; max-height: 200px;">
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.bg-pink {
+    background-color: #e91e63 !important;
+}
+</style>

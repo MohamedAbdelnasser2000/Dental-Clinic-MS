@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>تشخيص النظام</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-8 mx-auto">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-stethoscope me-2"></i>تشخيص نظام إدارة عيادة الأسنان</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <button class="btn btn-primary w-100 mb-3" onclick="checkDiagnostics()">
+                                    <i class="fas fa-search me-2"></i>فحص حالة النظام
+                                </button>
+                            </div>
+                            <div class="col-md-6">
+                                <button class="btn btn-warning w-100 mb-3" onclick="initializeDatabase()">
+                                    <i class="fas fa-database me-2"></i>تهيئة قاعدة البيانات
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <button class="btn btn-info w-100 mb-3" onclick="testAdminLogin()">
+                                    <i class="fas fa-user-shield me-2"></i>اختبار دخول الأدمن
+                                </button>
+                            </div>
+                            <div class="col-md-6">
+                                <button class="btn btn-success w-100 mb-3" onclick="testDoctorLogin()">
+                                    <i class="fas fa-user-md me-2"></i>اختبار دخول الطبيب
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <button class="btn btn-warning w-100 mb-3" onclick="fixAdminUser()">
+                                    <i class="fas fa-tools me-2"></i>إصلاح حساب الأدمن
+                                </button>
+                            </div>
+                            <div class="col-md-6">
+                                <button class="btn btn-danger w-100 mb-3" onclick="recreateAllUsers()">
+                                    <i class="fas fa-redo me-2"></i>إعادة إنشاء جميع المستخدمين
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="results" class="mt-4"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function showResult(title, data, type = 'info') {
+            const alertClass = type === 'success' ? 'alert-success' : 
+                              type === 'error' ? 'alert-danger' : 'alert-info';
+            
+            const html = `
+                <div class="alert ${alertClass}">
+                    <h5>${title}</h5>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                </div>
+            `;
+            document.getElementById('results').innerHTML = html;
+        }
+
+        async function checkDiagnostics() {
+            try {
+                const response = await fetch('/Diagnostics');
+                const data = await response.json();
+                showResult('حالة النظام', data, 'info');
+            } catch (error) {
+                showResult('خطأ', { error: error.message }, 'error');
+            }
+        }
+
+        async function initializeDatabase() {
+            try {
+                const response = await fetch('/Diagnostics/InitializeDatabase');
+                const data = await response.json();
+                showResult('تهيئة قاعدة البيانات', data, data.success ? 'success' : 'error');
+            } catch (error) {
+                showResult('خطأ', { error: error.message }, 'error');
+            }
+        }
+
+        async function testAdminLogin() {
+            try {
+                const response = await fetch('/Diagnostics/TestLogin?email=admin@dentalclinic.com&password=Admin123!');
+                const data = await response.json();
+                showResult('اختبار دخول الأدمن', data, data.success ? 'success' : 'error');
+            } catch (error) {
+                showResult('خطأ', { error: error.message }, 'error');
+            }
+        }
+
+        async function testDoctorLogin() {
+            try {
+                const response = await fetch('/Diagnostics/TestLogin?email=doctor@dentalclinic.com&password=Doctor123!');
+                const data = await response.json();
+                showResult('اختبار دخول الطبيب', data, data.success ? 'success' : 'error');
+            } catch (error) {
+                showResult('خطأ', { error: error.message }, 'error');
+            }
+        }
+
+        async function fixAdminUser() {
+            try {
+                const response = await fetch('/Diagnostics/FixAdminUser');
+                const data = await response.json();
+                showResult('إصلاح حساب الأدمن', data, data.success ? 'success' : 'error');
+            } catch (error) {
+                showResult('خطأ', { error: error.message }, 'error');
+            }
+        }
+
+        async function recreateAllUsers() {
+            if (!confirm('هل أنت متأكد من إعادة إنشاء جميع المستخدمين؟ سيتم حذف جميع المستخدمين الحاليين!')) {
+                return;
+            }
+
+            try {
+                const response = await fetch('/Diagnostics/RecreateAllUsers');
+                const data = await response.json();
+                showResult('إعادة إنشاء المستخدمين', data, data.success ? 'success' : 'error');
+            } catch (error) {
+                showResult('خطأ', { error: error.message }, 'error');
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,203 @@
+@model DentalClinicSystem.Models.Portfolio
+@{
+    ViewData["Title"] = "Add New Portfolio Item";
+    Layout = "_DashboardLayout";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-plus me-2"></i>Add New Portfolio Item</h2>
+    <a asp-action="Index" class="btn btn-secondary">
+        <i class="fas fa-arrow-left me-2"></i>Back to List
+    </a>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Portfolio Details</h5>
+            </div>
+            <div class="card-body">
+                <form asp-action="Create" method="post" enctype="multipart/form-data">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                    
+                    <!-- Basic Information -->
+                    <div class="row">
+                        <div class="col-md-8 mb-3">
+                            <label asp-for="Title" class="form-label">Title *</label>
+                            <input asp-for="Title" class="form-control" placeholder="Enter portfolio item title" />
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="Category" class="form-label">Category *</label>
+                            <select asp-for="Category" class="form-select">
+                                <option value="">Select Category</option>
+                                @if (ViewBag.Categories != null)
+                                {
+                                    @foreach (var category in (List<string>)ViewBag.Categories)
+                                    {
+                                        <option value="@category">@category</option>
+                                    }
+                                }
+                            </select>
+                            <span asp-validation-for="Category" class="text-danger"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label asp-for="Description" class="form-label">Description *</label>
+                        <textarea asp-for="Description" class="form-control" rows="4" placeholder="Describe this portfolio item..."></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                    
+                    <!-- Treatment Information -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="TreatmentType" class="form-label">Treatment Type</label>
+                            <input asp-for="TreatmentType" class="form-control" placeholder="e.g., Dental Implant, Teeth Whitening" />
+                            <span asp-validation-for="TreatmentType" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="PatientAge" class="form-label">Patient Age</label>
+                            <input asp-for="PatientAge" class="form-control" placeholder="e.g., 25 years old" />
+                            <span asp-validation-for="PatientAge" class="text-danger"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label asp-for="TechnicalDetails" class="form-label">Technical Details</label>
+                        <textarea asp-for="TechnicalDetails" class="form-control" rows="3" placeholder="Technical details about the procedure..."></textarea>
+                        <span asp-validation-for="TechnicalDetails" class="text-danger"></span>
+                    </div>
+                    
+                    <!-- Images -->
+                    <div class="mb-4">
+                        <h6 class="border-bottom pb-2 mb-3">Images</h6>
+                        
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Main Image</label>
+                                <input type="file" name="imageFile" class="form-control" accept="image/*" />
+                                <small class="form-text text-muted">For general portfolio items</small>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Before Image</label>
+                                <input type="file" name="beforeImageFile" class="form-control" accept="image/*" />
+                                <small class="form-text text-muted">For before/after comparisons</small>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">After Image</label>
+                                <input type="file" name="afterImageFile" class="form-control" accept="image/*" />
+                                <small class="form-text text-muted">For before/after comparisons</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Settings -->
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="DisplayOrder" class="form-label">Display Order</label>
+                            <input asp-for="DisplayOrder" type="number" class="form-control" value="0" />
+                            <small class="form-text text-muted">Lower numbers appear first</small>
+                            <span asp-validation-for="DisplayOrder" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="form-check mt-4">
+                                <input asp-for="IsActive" class="form-check-input" checked />
+                                <label asp-for="IsActive" class="form-check-label">
+                                    Active
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="form-check mt-4">
+                                <input asp-for="IsFeatured" class="form-check-input" />
+                                <label asp-for="IsFeatured" class="form-check-label">
+                                    Featured
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-end">
+                        <a asp-action="Index" class="btn btn-secondary me-2">
+                            <i class="fas fa-times me-2"></i>Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>Create Portfolio Item
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <!-- Guidelines -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="fas fa-lightbulb me-2"></i>Guidelines</h6>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled small">
+                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Use high-quality images (min 800x600px)</li>
+                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Write descriptive titles and descriptions</li>
+                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>For before/after cases, use both before and after images</li>
+                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Featured items appear on the homepage</li>
+                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Use display order to control arrangement</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Categories Info -->
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="fas fa-tags me-2"></i>Available Categories</h6>
+            </div>
+            <div class="card-body">
+                <div class="d-flex flex-wrap gap-2">
+                    @if (ViewBag.Categories != null)
+                    {
+                        @foreach (var category in (List<string>)ViewBag.Categories)
+                        {
+                            <span class="badge bg-light text-dark">@category</span>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        // Image preview functionality
+        function previewImage(input, previewId) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById(previewId).src = e.target.result;
+                    document.getElementById(previewId).style.display = 'block';
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+        
+        // Add image preview containers
+        document.querySelectorAll('input[type="file"]').forEach(function(input, index) {
+            var preview = document.createElement('img');
+            preview.style.maxWidth = '100%';
+            preview.style.maxHeight = '150px';
+            preview.style.marginTop = '10px';
+            preview.style.display = 'none';
+            preview.id = 'preview-' + index;
+            input.parentNode.appendChild(preview);
+            
+            input.addEventListener('change', function() {
+                previewImage(this, 'preview-' + index);
+            });
+        });
+    </script>
+}

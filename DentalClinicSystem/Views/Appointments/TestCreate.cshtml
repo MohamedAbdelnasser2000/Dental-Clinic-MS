@@ -1,0 +1,133 @@
+@model DentalClinicSystem.Models.Appointment
+@{
+    ViewData["Title"] = "Test Create Appointment";
+    Layout = "_DashboardLayout";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Test Create Appointment</h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Create" method="post" id="testForm">
+                        <div asp-validation-summary="All" class="text-danger mb-3"></div>
+                        
+                        @if (TempData["ErrorMessage"] != null)
+                        {
+                            <div class="alert alert-danger">
+                                @TempData["ErrorMessage"]
+                            </div>
+                        }
+                        
+                        @if (TempData["SuccessMessage"] != null)
+                        {
+                            <div class="alert alert-success">
+                                @TempData["SuccessMessage"]
+                            </div>
+                        }
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="PatientId" class="form-label">Patient *</label>
+                                <select asp-for="PatientId" class="form-select" asp-items="ViewBag.Patients" required>
+                                    <option value="">Select Patient</option>
+                                </select>
+                                <span asp-validation-for="PatientId" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="DentistId" class="form-label">Doctor *</label>
+                                <select asp-for="DentistId" class="form-select" asp-items="ViewBag.Dentists" required>
+                                    <option value="">Select Doctor</option>
+                                </select>
+                                <span asp-validation-for="DentistId" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label asp-for="AppointmentDate" class="form-label">Appointment Date *</label>
+                                <input asp-for="AppointmentDate" type="date" class="form-control" required />
+                                <span asp-validation-for="AppointmentDate" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label asp-for="StartTime" class="form-label">Start Time *</label>
+                                <input asp-for="StartTime" type="time" class="form-control" required />
+                                <span asp-validation-for="StartTime" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label asp-for="EndTime" class="form-label">End Time *</label>
+                                <input asp-for="EndTime" type="time" class="form-control" required />
+                                <span asp-validation-for="EndTime" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="ServiceId" class="form-label">Service Type</label>
+                                <select asp-for="ServiceId" class="form-select" asp-items="ViewBag.Services">
+                                    <option value="">Select Service Type (Optional)</option>
+                                </select>
+                                <span asp-validation-for="ServiceId" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="ReasonForVisit" class="form-label">Reason for Visit</label>
+                                <input asp-for="ReasonForVisit" class="form-control" placeholder="Enter reason for visit" />
+                                <span asp-validation-for="ReasonForVisit" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Notes" class="form-label">Notes</label>
+                            <textarea asp-for="Notes" class="form-control" rows="3" placeholder="Enter any additional notes"></textarea>
+                            <span asp-validation-for="Notes" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-flex justify-content-end">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Book Appointment
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        $(document).ready(function() {
+            // Set default values for testing
+            $('#AppointmentDate').val('2025-06-04');
+            $('#StartTime').val('10:00');
+            $('#EndTime').val('10:30');
+            $('#ReasonForVisit').val('Test appointment');
+            $('#Notes').val('This is a test appointment');
+            
+            // Auto-select first patient and dentist if available
+            if ($('#PatientId option').length > 1) {
+                $('#PatientId').val($('#PatientId option:eq(1)').val());
+            }
+            if ($('#DentistId option').length > 1) {
+                $('#DentistId').val($('#DentistId option:eq(1)').val());
+            }
+            
+            // Form submission handler
+            $('#testForm').on('submit', function(e) {
+                console.log('Form submitted');
+                console.log('PatientId:', $('#PatientId').val());
+                console.log('DentistId:', $('#DentistId').val());
+                console.log('AppointmentDate:', $('#AppointmentDate').val());
+                console.log('StartTime:', $('#StartTime').val());
+                console.log('EndTime:', $('#EndTime').val());
+                console.log('ReasonForVisit:', $('#ReasonForVisit').val());
+                console.log('Notes:', $('#Notes').val());
+            });
+        });
+    </script>
+}

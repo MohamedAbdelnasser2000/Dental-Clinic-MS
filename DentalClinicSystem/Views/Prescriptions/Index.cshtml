@@ -1,0 +1,167 @@
+@model IEnumerable<DentalClinicSystem.Models.Prescription>
+@{
+    ViewData["Title"] = "Prescriptions Management";
+    Layout = "_DashboardLayout";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-prescription-bottle me-2 text-primary"></i>Prescriptions Management</h2>
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="fas fa-plus me-2"></i>Add New Prescription
+    </a>
+</div>
+
+<!-- Search and Filter Section -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-3">
+                <label class="form-label">Search</label>
+                <input type="text" class="form-control" name="searchString" value="@ViewBag.SearchString" placeholder="Search prescriptions...">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Patient</label>
+                @Html.DropDownList("patientId", ViewBag.Patients as SelectList, "All Patients", new { @class = "form-select" })
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Dentist</label>
+                @Html.DropDownList("dentistId", ViewBag.Dentists as SelectList, "All Dentists", new { @class = "form-select" })
+            </div>
+            <div class="col-md-3 d-flex align-items-end">
+                <button type="submit" class="btn btn-outline-primary me-2">
+                    <i class="fas fa-search me-1"></i>Search
+                </button>
+                <a asp-action="Index" class="btn btn-outline-secondary">
+                    <i class="fas fa-undo me-1"></i>Reset
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Prescriptions Table -->
+<div class="card">
+    <div class="card-body">
+        @if (Model.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Date</th>
+                            <th>Patient</th>
+                            <th>Dentist</th>
+                            <th>Medication</th>
+                            <th>Dosage</th>
+                            <th>Instructions</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var prescription in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <strong>@prescription.PrescriptionDate.ToString("dd/MM/yyyy")</strong>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-user-circle me-2 text-muted"></i>
+                                        @prescription.Patient.FullName
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-user-md me-2 text-primary"></i>
+                                        @prescription.Dentist.FullName
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="fw-bold text-info">@prescription.Medication</span>
+                                </td>
+                                <td>@prescription.Dosage</td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(prescription.Instructions))
+                                    {
+                                        <span class="text-truncate d-inline-block" style="max-width: 200px;" title="@prescription.Instructions">
+                                            @prescription.Instructions
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">No instructions</span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a asp-action="Details" asp-route-id="@prescription.PrescriptionId" class="btn btn-sm btn-outline-info" title="View Details">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a asp-action="Edit" asp-route-id="@prescription.PrescriptionId" class="btn btn-sm btn-outline-warning" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <button type="button" class="btn btn-sm btn-outline-success" title="Print" onclick="printPrescription(@prescription.PrescriptionId)">
+                                            <i class="fas fa-print"></i>
+                                        </button>
+                                        <a asp-action="Delete" asp-route-id="@prescription.PrescriptionId" class="btn btn-sm btn-outline-danger" title="Delete">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            @if (ViewBag.TotalPages > 1)
+            {
+                <nav aria-label="Prescriptions pagination" class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        @if (ViewBag.CurrentPage > 1)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.CurrentPage - 1)" asp-route-searchString="@ViewBag.SearchString" asp-route-patientId="@ViewBag.PatientId" asp-route-dentistId="@ViewBag.DentistId">Previous</a>
+                            </li>
+                        }
+
+                        @for (int i = Math.Max(1, ViewBag.CurrentPage - 2); i <= Math.Min(ViewBag.TotalPages, ViewBag.CurrentPage + 2); i++)
+                        {
+                            <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                                <a class="page-link" asp-action="Index" asp-route-page="@i" asp-route-searchString="@ViewBag.SearchString" asp-route-patientId="@ViewBag.PatientId" asp-route-dentistId="@ViewBag.DentistId">@i</a>
+                            </li>
+                        }
+
+                        @if (ViewBag.CurrentPage < ViewBag.TotalPages)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.CurrentPage + 1)" asp-route-searchString="@ViewBag.SearchString" asp-route-patientId="@ViewBag.PatientId" asp-route-dentistId="@ViewBag.DentistId">Next</a>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+            }
+        }
+        else
+        {
+            <div class="text-center py-5">
+                <i class="fas fa-prescription-bottle fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">No prescriptions found</h5>
+                <p class="text-muted">Start by adding your first prescription.</p>
+                <a asp-action="Create" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>Add New Prescription
+                </a>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function printPrescription(prescriptionId) {
+            // This would typically open a print-friendly version of the prescription
+            window.open('/Prescriptions/Print/' + prescriptionId, '_blank');
+        }
+    </script>
+}

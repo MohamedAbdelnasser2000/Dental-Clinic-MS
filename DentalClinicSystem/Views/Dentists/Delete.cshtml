@@ -1,0 +1,126 @@
+@model DentalClinicSystem.Models.Dentist
+@{
+    ViewData["Title"] = "حذف الطبيب";
+    Layout = "_DashboardLayout";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-trash-alt me-2"></i>تأكيد حذف الطبيب
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning" role="alert">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>تحذير!</strong> هل أنت متأكد من أنك تريد حذف هذا الطبيب؟ 
+                        <br>
+                        <small class="text-muted">سيتم إلغاء تفعيل الطبيب وليس حذفه نهائياً من النظام.</small>
+                    </div>
+
+                    <!-- Doctor Information Display -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="text-primary mb-3">
+                                <i class="fas fa-user me-2"></i>معلومات الطبيب
+                            </h6>
+                            <div class="row mb-2">
+                                <div class="col-4"><strong>الاسم الكامل:</strong></div>
+                                <div class="col-8">@Model.FullName</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-4"><strong>البريد الإلكتروني:</strong></div>
+                                <div class="col-8">@Model.Email</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-4"><strong>رقم الهاتف:</strong></div>
+                                <div class="col-8">@Model.Phone</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-4"><strong>التخصص:</strong></div>
+                                <div class="col-8">
+                                    <span class="badge bg-success">@Model.Specialization</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-primary mb-3">
+                                <i class="fas fa-stethoscope me-2"></i>المعلومات المهنية
+                            </h6>
+                            <div class="row mb-2">
+                                <div class="col-4"><strong>رقم الترخيص:</strong></div>
+                                <div class="col-8">@Model.LicenseNumber</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-4"><strong>سنوات الخبرة:</strong></div>
+                                <div class="col-8">
+                                    <span class="badge bg-info">@Model.YearsOfExperience سنة</span>
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-4"><strong>تاريخ الانضمام:</strong></div>
+                                <div class="col-8">@Model.JoinDate.ToString("dd/MM/yyyy")</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-4"><strong>الحالة الحالية:</strong></div>
+                                <div class="col-8">
+                                    @if (Model.IsActive)
+                                    {
+                                        <span class="badge bg-success">نشط</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">غير نشط</span>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.Qualifications))
+                    {
+                        <hr class="my-3">
+                        <div class="row">
+                            <div class="col-12">
+                                <h6 class="text-primary mb-2">
+                                    <i class="fas fa-certificate me-2"></i>المؤهلات
+                                </h6>
+                                <div class="bg-light p-3 rounded">
+                                    @Model.Qualifications
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    <hr class="my-4">
+
+                    <!-- Confirmation Form -->
+                    <form asp-action="Delete" method="post">
+                        <input type="hidden" asp-for="DentistId" />
+                        
+                        <div class="d-flex justify-content-end gap-2">
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left me-1"></i>إلغاء
+                            </a>
+                            <a asp-action="Details" asp-route-id="@Model.DentistId" class="btn btn-info">
+                                <i class="fas fa-eye me-1"></i>عرض التفاصيل
+                            </a>
+                            <button type="submit" class="btn btn-danger" onclick="return confirm('هل أنت متأكد من حذف هذا الطبيب؟')">
+                                <i class="fas fa-trash-alt me-1"></i>تأكيد الحذف
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.border-danger {
+    border-color: #dc3545 !important;
+}
+</style>

@@ -1,0 +1,184 @@
+@model DentalClinicSystem.Models.Invoice
+@{
+    ViewData["Title"] = "Create New Invoice";
+    Layout = "_DashboardLayout";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-file-invoice-dollar me-2 text-primary"></i>Create New Invoice</h2>
+    <a asp-action="Index" class="btn btn-secondary">
+        <i class="fas fa-arrow-left me-2"></i>Back to List
+    </a>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-file-invoice me-2"></i>Invoice Information</h5>
+            </div>
+            <div class="card-body">
+                <form asp-action="Create" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger">
+                            @TempData["ErrorMessage"]
+                        </div>
+                    }
+
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success">
+                            @TempData["SuccessMessage"]
+                        </div>
+                    }
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="PatientId" class="form-label">Patient *</label>
+                            @Html.DropDownListFor(m => m.PatientId, ViewBag.Patients as SelectList, "Select Patient", new { @class = "form-select", @required = "required" })
+                            <span asp-validation-for="PatientId" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="InvoiceNumber" class="form-label">Invoice Number *</label>
+                            <input asp-for="InvoiceNumber" class="form-control" readonly />
+                            <span asp-validation-for="InvoiceNumber" class="text-danger"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="InvoiceDate" class="form-label">Invoice Date *</label>
+                            <input asp-for="InvoiceDate" type="date" class="form-control" required />
+                            <span asp-validation-for="InvoiceDate" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="DueDate" class="form-label">Due Date *</label>
+                            <input asp-for="DueDate" type="date" class="form-control" required />
+                            <span asp-validation-for="DueDate" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="TotalAmount" class="form-label">Total Amount ($) *</label>
+                            <input asp-for="TotalAmount" type="number" step="0.01" min="0" class="form-control" placeholder="0.00" required />
+                            <span asp-validation-for="TotalAmount" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="DiscountAmount" class="form-label">Discount Amount ($)</label>
+                            <input asp-for="DiscountAmount" type="number" step="0.01" min="0" class="form-control" placeholder="0.00" value="0" />
+                            <span asp-validation-for="DiscountAmount" class="text-danger"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="PaidAmount" class="form-label">Paid Amount ($)</label>
+                            <input asp-for="PaidAmount" type="number" step="0.01" min="0" class="form-control" placeholder="0.00" value="0" />
+                            <span asp-validation-for="PaidAmount" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="InsuranceAmount" class="form-label">Insurance Amount ($)</label>
+                            <input asp-for="InsuranceAmount" type="number" step="0.01" min="0" class="form-control" placeholder="0.00" value="0" />
+                            <span asp-validation-for="InsuranceAmount" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Status" class="form-label">Status *</label>
+                            <select asp-for="Status" class="form-select" required>
+                                <option value="">Select Status</option>
+                                <option value="Unpaid">Unpaid</option>
+                                <option value="Paid">Paid</option>
+                                <option value="Partially Paid">Partially Paid</option>
+                                <option value="Overdue">Overdue</option>
+                            </select>
+                            <span asp-validation-for="Status" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="TreatmentId" class="form-label">Treatment (Optional)</label>
+                            @Html.DropDownListFor(m => m.TreatmentId, ViewBag.Treatments as SelectList, "Select Treatment", new { @class = "form-select" })
+                            <span asp-validation-for="TreatmentId" class="text-danger"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label asp-for="Notes" class="form-label">Notes</label>
+                        <textarea asp-for="Notes" class="form-control" rows="4" placeholder="Additional notes about the invoice..."></textarea>
+                        <span asp-validation-for="Notes" class="text-danger"></span>
+                    </div>
+                    
+                    <div class="d-flex justify-content-end">
+                        <a asp-action="Index" class="btn btn-secondary me-2">Cancel</a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>Create Invoice
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>Invoice Guidelines</h6>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <h6><i class="fas fa-lightbulb me-2"></i>Tips:</h6>
+                    <ul class="mb-0 small">
+                        <li>Select the correct patient</li>
+                        <li>Invoice number is auto-generated</li>
+                        <li>Set accurate amounts</li>
+                        <li>Update status based on payment</li>
+                        <li>Add detailed notes for reference</li>
+                    </ul>
+                </div>
+                
+                <div class="alert alert-warning">
+                    <h6><i class="fas fa-calculator me-2"></i>Calculation:</h6>
+                    <p class="mb-0 small">Outstanding = Total Amount - Paid Amount</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        // Auto-update status based on paid amount
+        document.addEventListener('DOMContentLoaded', function() {
+            const totalAmountInput = document.querySelector('input[name="TotalAmount"]');
+            const paidAmountInput = document.querySelector('input[name="PaidAmount"]');
+            const statusSelect = document.querySelector('select[name="Status"]');
+            
+            function updateStatus() {
+                const total = parseFloat(totalAmountInput.value) || 0;
+                const paid = parseFloat(paidAmountInput.value) || 0;
+                
+                if (paid === 0) {
+                    statusSelect.value = 'Unpaid';
+                } else if (paid >= total) {
+                    statusSelect.value = 'Paid';
+                } else {
+                    statusSelect.value = 'Partially Paid';
+                }
+            }
+            
+            totalAmountInput.addEventListener('input', updateStatus);
+            paidAmountInput.addEventListener('input', updateStatus);
+        });
+    </script>
+}

@@ -1,0 +1,173 @@
+@model IEnumerable<DentalClinicSystem.Models.Treatment>
+@{
+    ViewData["Title"] = "Treatments Management";
+    Layout = "_DashboardLayout";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-procedures me-2 text-primary"></i>Treatments Management</h2>
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="fas fa-plus me-2"></i>Add New Treatment
+    </a>
+</div>
+
+<!-- Search and Filter Section -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-3">
+                <label class="form-label">Search</label>
+                <input type="text" class="form-control" name="searchString" value="@ViewBag.SearchString" placeholder="Search treatments...">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Patient</label>
+                @Html.DropDownList("patientId", ViewBag.Patients as SelectList, "All Patients", new { @class = "form-select" })
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Dentist</label>
+                @Html.DropDownList("dentistId", ViewBag.Dentists as SelectList, "All Dentists", new { @class = "form-select" })
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Status</label>
+                <select name="status" class="form-select">
+                    <option value="">All Status</option>
+                    <option value="Completed" selected="@(ViewBag.Status == "Completed")">Completed</option>
+                    <option value="In Progress" selected="@(ViewBag.Status == "In Progress")">In Progress</option>
+                    <option value="Scheduled" selected="@(ViewBag.Status == "Scheduled")">Scheduled</option>
+                    <option value="Cancelled" selected="@(ViewBag.Status == "Cancelled")">Cancelled</option>
+                </select>
+            </div>
+            <div class="col-md-3 d-flex align-items-end">
+                <button type="submit" class="btn btn-outline-primary me-2">
+                    <i class="fas fa-search me-1"></i>Search
+                </button>
+                <a asp-action="Index" class="btn btn-outline-secondary">
+                    <i class="fas fa-undo me-1"></i>Reset
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Treatments Table -->
+<div class="card">
+    <div class="card-body">
+        @if (Model.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Date</th>
+                            <th>Patient</th>
+                            <th>Dentist</th>
+                            <th>Treatment Type</th>
+                            <th>Cost</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var treatment in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <strong>@treatment.TreatmentDate.ToString("dd/MM/yyyy")</strong>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-user-circle me-2 text-muted"></i>
+                                        @treatment.Patient.FullName
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-user-md me-2 text-primary"></i>
+                                        @treatment.Dentist.FullName
+                                    </div>
+                                </td>
+                                <td>@treatment.TreatmentType</td>
+                                <td>
+                                    <span class="fw-bold text-success">$@treatment.Cost.ToString("N0")</span>
+                                </td>
+                                <td>
+                                    @switch (treatment.Status)
+                                    {
+                                        case "Completed":
+                                            <span class="badge bg-success">Completed</span>
+                                            break;
+                                        case "In Progress":
+                                            <span class="badge bg-warning">In Progress</span>
+                                            break;
+                                        case "Scheduled":
+                                            <span class="badge bg-info">Scheduled</span>
+                                            break;
+                                        case "Cancelled":
+                                            <span class="badge bg-danger">Cancelled</span>
+                                            break;
+                                        default:
+                                            <span class="badge bg-secondary">@treatment.Status</span>
+                                            break;
+                                    }
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a asp-action="Details" asp-route-id="@treatment.TreatmentId" class="btn btn-sm btn-outline-info" title="View Details">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a asp-action="Edit" asp-route-id="@treatment.TreatmentId" class="btn btn-sm btn-outline-warning" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@treatment.TreatmentId" class="btn btn-sm btn-outline-danger" title="Delete">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            @if (ViewBag.TotalPages > 1)
+            {
+                <nav aria-label="Treatments pagination" class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        @if (ViewBag.CurrentPage > 1)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.CurrentPage - 1)" asp-route-searchString="@ViewBag.SearchString" asp-route-patientId="@ViewBag.PatientId" asp-route-dentistId="@ViewBag.DentistId" asp-route-status="@ViewBag.Status">Previous</a>
+                            </li>
+                        }
+
+                        @for (int i = Math.Max(1, ViewBag.CurrentPage - 2); i <= Math.Min(ViewBag.TotalPages, ViewBag.CurrentPage + 2); i++)
+                        {
+                            <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                                <a class="page-link" asp-action="Index" asp-route-page="@i" asp-route-searchString="@ViewBag.SearchString" asp-route-patientId="@ViewBag.PatientId" asp-route-dentistId="@ViewBag.DentistId" asp-route-status="@ViewBag.Status">@i</a>
+                            </li>
+                        }
+
+                        @if (ViewBag.CurrentPage < ViewBag.TotalPages)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.CurrentPage + 1)" asp-route-searchString="@ViewBag.SearchString" asp-route-patientId="@ViewBag.PatientId" asp-route-dentistId="@ViewBag.DentistId" asp-route-status="@ViewBag.Status">Next</a>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+            }
+        }
+        else
+        {
+            <div class="text-center py-5">
+                <i class="fas fa-procedures fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">No treatments found</h5>
+                <p class="text-muted">Start by adding your first treatment.</p>
+                <a asp-action="Create" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>Add New Treatment
+                </a>
+            </div>
+        }
+    </div>
+</div>

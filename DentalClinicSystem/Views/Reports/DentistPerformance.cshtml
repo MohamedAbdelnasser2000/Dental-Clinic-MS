@@ -1,0 +1,358 @@
+@{
+    ViewData["Title"] = "Dentist Performance Report";
+    Layout = "_DashboardLayout";
+    var appointments = ViewBag.Appointments as List<DentalClinicSystem.Models.Appointment> ?? new List<DentalClinicSystem.Models.Appointment>();
+    var dentistStats = appointments.GroupBy(a => a.Dentist).Select(g => new {
+        Dentist = g.Key,
+        TotalAppointments = g.Count(),
+        CompletedAppointments = g.Count(a => a.Status == "تم"),
+        CancelledAppointments = g.Count(a => a.Status == "ملغي"),
+        NoShowAppointments = g.Count(a => a.Status == "لم يحضر"),
+        CompletionRate = g.Count() > 0 ? (double)g.Count(a => a.Status == "تم") / g.Count() * 100 : 0
+    }).ToList();
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-user-md me-2 text-primary"></i>Dentist Performance Report</h2>
+    <div class="btn-group">
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Back to Reports
+        </a>
+        <button class="btn btn-success" onclick="exportToExcel()">
+            <i class="fas fa-file-excel me-2"></i>Export Excel
+        </button>
+        <button class="btn btn-primary" onclick="window.print()">
+            <i class="fas fa-print me-2"></i>Print Report
+        </button>
+    </div>
+</div>
+
+<!-- Filters -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h6 class="mb-0"><i class="fas fa-filter me-2"></i>Filter Options</h6>
+    </div>
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label">Start Date</label>
+                <input type="date" class="form-control" name="startDate" value="@ViewBag.StartDate?.ToString("yyyy-MM-dd")" />
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">End Date</label>
+                <input type="date" class="form-control" name="endDate" value="@ViewBag.EndDate?.ToString("yyyy-MM-dd")" />
+            </div>
+            <div class="col-md-4 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary me-2">
+                    <i class="fas fa-search me-1"></i>Filter
+                </button>
+                <a asp-action="DentistPerformance" class="btn btn-outline-secondary">
+                    <i class="fas fa-undo me-1"></i>Reset
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Summary Statistics -->
+<div class="row mb-4">
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 class="mb-0">@dentistStats.Count()</h4>
+                        <p class="mb-0">Active Dentists</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-user-md fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 class="mb-0">@appointments.Count()</h4>
+                        <p class="mb-0">Total Appointments</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-calendar-alt fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 class="mb-0">@appointments.Count(a => a.Status == "تم")</h4>
+                        <p class="mb-0">Completed</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-check-circle fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="card bg-warning text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 class="mb-0">@(dentistStats.Any() ? dentistStats.Average(d => d.CompletionRate).ToString("F1") : "0")%</h4>
+                        <p class="mb-0">Avg Completion Rate</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-percentage fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Dentist Performance Table -->
+<div class="card">
+    <div class="card-header">
+        <h6 class="mb-0"><i class="fas fa-table me-2"></i>Dentist Performance (@dentistStats.Count() dentists)</h6>
+    </div>
+    <div class="card-body">
+        @if (dentistStats.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-striped table-hover" id="performanceTable">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Dentist</th>
+                            <th>Specialization</th>
+                            <th>Total Appointments</th>
+                            <th>Completed</th>
+                            <th>Cancelled</th>
+                            <th>No Show</th>
+                            <th>Completion Rate</th>
+                            <th>Performance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var stat in dentistStats.OrderByDescending(s => s.CompletionRate))
+                        {
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-sm me-2">
+                                            @if (!string.IsNullOrEmpty(stat.Dentist?.PhotoPath))
+                                            {
+                                                <img src="@stat.Dentist.PhotoPath" alt="@stat.Dentist.FullName" class="avatar-image" />
+                                            }
+                                            else
+                                            {
+                                                <i class="fas fa-user-md fa-2x text-primary"></i>
+                                            }
+                                        </div>
+                                        <div>
+                                            <strong>@stat.Dentist?.FullName</strong>
+                                            <br><small class="text-muted">@stat.Dentist?.Email</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>@stat.Dentist?.Specialization</td>
+                                <td><span class="badge bg-primary">@stat.TotalAppointments</span></td>
+                                <td><span class="badge bg-success">@stat.CompletedAppointments</span></td>
+                                <td><span class="badge bg-danger">@stat.CancelledAppointments</span></td>
+                                <td><span class="badge bg-secondary">@stat.NoShowAppointments</span></td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="progress me-2" style="width: 100px; height: 20px;">
+                                            <div class="progress-bar @(stat.CompletionRate >= 80 ? "bg-success" : stat.CompletionRate >= 60 ? "bg-warning" : "bg-danger")" 
+                                                 role="progressbar" style="width: @stat.CompletionRate%"></div>
+                                        </div>
+                                        <span class="fw-bold">@stat.CompletionRate.ToString("F1")%</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    @{
+                                        var performanceClass = stat.CompletionRate >= 80 ? "bg-success" : 
+                                                             stat.CompletionRate >= 60 ? "bg-warning" : "bg-danger";
+                                        var performanceText = stat.CompletionRate >= 80 ? "Excellent" : 
+                                                            stat.CompletionRate >= 60 ? "Good" : "Needs Improvement";
+                                    }
+                                    <span class="badge @performanceClass">@performanceText</span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="text-center py-5">
+                <i class="fas fa-user-md fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">No performance data found</h5>
+                <p class="text-muted">Try adjusting your filter criteria or check back later.</p>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Performance Charts -->
+@if (dentistStats.Any())
+{
+    <div class="row mt-4">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Appointments by Dentist</h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="appointmentsChart" width="400" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="fas fa-chart-line me-2"></i>Completion Rates</h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="completionChart" width="400" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script>
+        $(document).ready(function() {
+            $('#performanceTable').DataTable({
+                "pageLength": 25,
+                "order": [[ 6, "desc" ]],
+                "columnDefs": [
+                    { "orderable": false, "targets": 7 }
+                ]
+            });
+        });
+
+        function exportToExcel() {
+            const table = document.getElementById('performanceTable');
+            const wb = XLSX.utils.table_to_book(table, {sheet: "Dentist Performance"});
+            const filename = `Dentist_Performance_${new Date().toISOString().split('T')[0]}.xlsx`;
+            XLSX.writeFile(wb, filename);
+        }
+
+        @if (dentistStats.Any())
+        {
+            <text>
+            // Appointments Chart
+            const appointmentsData = @Html.Raw(Json.Serialize(dentistStats.Select(d => new { Name = d.Dentist?.FullName ?? "Unknown", Total = d.TotalAppointments, Completed = d.CompletedAppointments })));
+            
+            const appointmentsCtx = document.getElementById('appointmentsChart').getContext('2d');
+            new Chart(appointmentsCtx, {
+                type: 'bar',
+                data: {
+                    labels: appointmentsData.map(d => d.name),
+                    datasets: [{
+                        label: 'Total Appointments',
+                        data: appointmentsData.map(d => d.total),
+                        backgroundColor: '#007bff',
+                        borderWidth: 1
+                    }, {
+                        label: 'Completed',
+                        data: appointmentsData.map(d => d.completed),
+                        backgroundColor: '#28a745',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // Completion Rate Chart
+            const completionData = @Html.Raw(Json.Serialize(dentistStats.Select(d => new { Name = d.Dentist?.FullName ?? "Unknown", Rate = d.CompletionRate })));
+            
+            const completionCtx = document.getElementById('completionChart').getContext('2d');
+            new Chart(completionCtx, {
+                type: 'line',
+                data: {
+                    labels: completionData.map(d => d.name),
+                    datasets: [{
+                        label: 'Completion Rate (%)',
+                        data: completionData.map(d => d.rate),
+                        borderColor: '#17a2b8',
+                        backgroundColor: 'rgba(23, 162, 184, 0.1)',
+                        borderWidth: 2,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            </text>
+        }
+    </script>
+}
+
+@section Styles {
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css">
+    
+    <style>
+        .avatar-sm {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            overflow: hidden;
+        }
+        
+        .avatar-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        @@media print {
+            .btn-group, .card-header .btn {
+                display: none !important;
+            }
+            .table {
+                font-size: 12px;
+            }
+        }
+    </style>
+}

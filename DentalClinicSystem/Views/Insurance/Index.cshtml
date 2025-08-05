@@ -1,0 +1,380 @@
+@model IEnumerable<DentalClinicSystem.Models.Insurance>
+@{
+    ViewData["Title"] = "Insurance Management";
+    Layout = "_DashboardLayout";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-shield-alt me-2 text-primary"></i>Insurance Management</h2>
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="fas fa-plus me-2"></i>Add New Insurance
+    </a>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 class="mb-0">@Model.Count()</h4>
+                        <p class="mb-0">Total Policies</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-shield-alt fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 class="mb-0">@Model.Count(i => i.IsActive)</h4>
+                        <p class="mb-0">Active Policies</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-check-circle fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-warning text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 class="mb-0">@Model.Count(i => i.ExpiryDate < DateTime.Now.AddDays(30))</h4>
+                        <p class="mb-0">Expiring Soon</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-exclamation-triangle fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 class="mb-0">@Model.Where(i => i.IsActive).Average(i => i.CoveragePercentage).ToString("F0")%</h4>
+                        <p class="mb-0">Avg Coverage</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-percentage fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Search and Filter -->
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-4">
+                <input type="text" id="searchInput" class="form-control" placeholder="Search insurance policies...">
+            </div>
+            <div class="col-md-3">
+                <select id="providerFilter" class="form-select">
+                    <option value="">All Providers</option>
+                    @foreach (var provider in Model.Select(i => i.ProviderName).Distinct())
+                    {
+                        <option value="@provider">@provider</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select id="statusFilter" class="form-select">
+                    <option value="">All Status</option>
+                    <option value="Active">Active</option>
+                    <option value="Expired">Expired</option>
+                    <option value="Expiring">Expiring Soon</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="button" class="btn btn-outline-secondary w-100" onclick="clearFilters()">
+                    <i class="fas fa-times me-2"></i>Clear
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Insurance Table -->
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0"><i class="fas fa-list me-2"></i>Insurance Policies</h5>
+    </div>
+    <div class="card-body">
+        @if (Model.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-hover" id="insuranceTable">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Patient</th>
+                            <th>Provider</th>
+                            <th>Policy Number</th>
+                            <th>Coverage</th>
+                            <th>Expiry Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var insurance in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <div>
+                                        <strong>@insurance.Patient.FullName</strong>
+                                        <br><small class="text-muted">@insurance.Patient.PhoneNumber</small>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>
+                                        <strong>@insurance.ProviderName</strong>
+                                        @if (!string.IsNullOrEmpty(insurance.ProviderPhone))
+                                        {
+                                            <br><small class="text-muted"><i class="fas fa-phone me-1"></i>@insurance.ProviderPhone</small>
+                                        }
+                                    </div>
+                                </td>
+                                <td>
+                                    <code>@insurance.PolicyNumber</code>
+                                </td>
+                                <td>
+                                    <div>
+                                        <strong class="text-success">@insurance.CoveragePercentage%</strong>
+                                        @if (insurance.MaxCoverageAmount.HasValue)
+                                        {
+                                            <br><small class="text-muted">Max: $@insurance.MaxCoverageAmount.Value.ToString("F2")</small>
+                                        }
+                                    </div>
+                                </td>
+                                <td>
+                                    @insurance.ExpiryDate.ToString("MMM dd, yyyy")
+                                    @if (insurance.ExpiryDate < DateTime.Now)
+                                    {
+                                        <br><span class="badge bg-danger">Expired</span>
+                                    }
+                                    else if (insurance.ExpiryDate < DateTime.Now.AddDays(30))
+                                    {
+                                        <br><span class="badge bg-warning">Expiring Soon</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (insurance.IsActive && insurance.ExpiryDate > DateTime.Now)
+                                    {
+                                        <span class="badge bg-success">Active</span>
+                                    }
+                                    else if (insurance.ExpiryDate < DateTime.Now)
+                                    {
+                                        <span class="badge bg-danger">Expired</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">Inactive</span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a asp-action="Details" asp-route-id="@insurance.InsuranceId" class="btn btn-sm btn-outline-info" title="View Details">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a asp-action="Edit" asp-route-id="@insurance.InsuranceId" class="btn btn-sm btn-outline-warning" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <button type="button" class="btn btn-sm btn-outline-success" onclick="verifyInsurance(@insurance.InsuranceId)" title="Verify">
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="confirmDelete(@insurance.InsuranceId, '@insurance.PolicyNumber')" title="Delete">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="text-center py-5">
+                <i class="fas fa-shield-alt fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">No insurance policies found</h5>
+                <p class="text-muted">Start by adding insurance information for your patients.</p>
+                <a asp-action="Create" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>Add First Insurance Policy
+                </a>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirm Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete insurance policy <strong id="policyNumber"></strong>?</p>
+                <p class="text-danger"><i class="fas fa-exclamation-triangle me-2"></i>This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form id="deleteForm" method="post" style="display: inline;">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash me-2"></i>Delete
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Verify Insurance Modal -->
+<div class="modal fade" id="verifyModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Verify Insurance</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Verify insurance coverage with the provider?</p>
+                <p class="text-info"><i class="fas fa-info-circle me-2"></i>This will check the current status and coverage details.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-success" onclick="performVerification()">
+                    <i class="fas fa-check me-2"></i>Verify Now
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Search and filter functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            const providerFilter = document.getElementById('providerFilter');
+            const statusFilter = document.getElementById('statusFilter');
+            const table = document.getElementById('insuranceTable');
+            
+            function filterTable() {
+                const searchTerm = searchInput.value.toLowerCase();
+                const providerValue = providerFilter.value;
+                const statusValue = statusFilter.value;
+                const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+                
+                for (let row of rows) {
+                    const patient = row.cells[0].textContent.toLowerCase();
+                    const provider = row.cells[1].textContent;
+                    const policyNumber = row.cells[2].textContent.toLowerCase();
+                    const status = row.cells[5].textContent;
+                    
+                    const matchesSearch = patient.includes(searchTerm) || policyNumber.includes(searchTerm);
+                    const matchesProvider = !providerValue || provider.includes(providerValue);
+                    const matchesStatus = !statusValue || 
+                        (statusValue === 'Active' && status.includes('Active')) ||
+                        (statusValue === 'Expired' && status.includes('Expired')) ||
+                        (statusValue === 'Expiring' && status.includes('Expiring'));
+                    
+                    row.style.display = matchesSearch && matchesProvider && matchesStatus ? '' : 'none';
+                }
+            }
+            
+            searchInput.addEventListener('input', filterTable);
+            providerFilter.addEventListener('change', filterTable);
+            statusFilter.addEventListener('change', filterTable);
+        });
+        
+        function clearFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('providerFilter').value = '';
+            document.getElementById('statusFilter').value = '';
+            
+            const rows = document.getElementById('insuranceTable').getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+            for (let row of rows) {
+                row.style.display = '';
+            }
+        }
+        
+        function confirmDelete(insuranceId, policyNumber) {
+            document.getElementById('policyNumber').textContent = policyNumber;
+            document.getElementById('deleteForm').action = '/Insurance/Delete/' + insuranceId;
+            new bootstrap.Modal(document.getElementById('deleteModal')).show();
+        }
+        
+        let currentInsuranceId = null;
+        
+        function verifyInsurance(insuranceId) {
+            currentInsuranceId = insuranceId;
+            new bootstrap.Modal(document.getElementById('verifyModal')).show();
+        }
+        
+        function performVerification() {
+            if (currentInsuranceId) {
+                // Show loading state
+                const modal = bootstrap.Modal.getInstance(document.getElementById('verifyModal'));
+                modal.hide();
+                
+                // Simulate verification process
+                const toast = document.createElement('div');
+                toast.className = 'toast align-items-center text-white bg-info border-0';
+                toast.setAttribute('role', 'alert');
+                toast.innerHTML = `
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            <i class="fas fa-spinner fa-spin me-2"></i>Verifying insurance coverage...
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                    </div>
+                `;
+                
+                document.body.appendChild(toast);
+                const bsToast = new bootstrap.Toast(toast);
+                bsToast.show();
+                
+                // Simulate API call
+                setTimeout(() => {
+                    toast.remove();
+                    
+                    const successToast = document.createElement('div');
+                    successToast.className = 'toast align-items-center text-white bg-success border-0';
+                    successToast.setAttribute('role', 'alert');
+                    successToast.innerHTML = `
+                        <div class="d-flex">
+                            <div class="toast-body">
+                                <i class="fas fa-check me-2"></i>Insurance verified successfully!
+                            </div>
+                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                        </div>
+                    `;
+                    
+                    document.body.appendChild(successToast);
+                    const successBsToast = new bootstrap.Toast(successToast);
+                    successBsToast.show();
+                    
+                    setTimeout(() => successToast.remove(), 3000);
+                }, 2000);
+            }
+        }
+    </script>
+}

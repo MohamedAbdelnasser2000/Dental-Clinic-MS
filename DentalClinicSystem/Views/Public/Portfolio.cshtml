@@ -1,0 +1,221 @@
+@{
+    ViewData["Title"] = "Portfolio";
+    Layout = "_PublicLayout";
+}
+
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6" data-aos="fade-right">
+                <div class="hero-content">
+                    <h1 class="display-4 fw-bold mb-4">
+                        Welcome to @(ViewBag.ClinicInfo?.ClinicName ?? "Dental Excellence Clinic")
+                    </h1>
+                    <p class="lead mb-4">
+                        @(ViewBag.ClinicInfo?.Description ?? "Your trusted partner for comprehensive dental care with state-of-the-art technology and experienced professionals.")
+                    </p>
+                    <div class="d-flex gap-3">
+                        <a href="@Url.Action("Contact", "Public")" class="btn btn-primary-custom btn-lg">
+                            <i class="fas fa-calendar-alt me-2"></i>Book Appointment
+                        </a>
+                        <a href="@Url.Action("Services", "Public")" class="btn btn-outline-light btn-lg">
+                            <i class="fas fa-tooth me-2"></i>Our Services
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6" data-aos="fade-left">
+                @if (!string.IsNullOrEmpty(ViewBag.ClinicInfo?.HeroImagePath))
+                {
+                    <img src="@ViewBag.ClinicInfo.HeroImagePath" alt="Dental Clinic" class="img-fluid rounded-3 shadow-lg">
+                }
+                else
+                {
+                    <div class="bg-white bg-opacity-10 rounded-3 p-5 text-center">
+                        <i class="fas fa-tooth fa-5x mb-3"></i>
+                        <h3>Professional Dental Care</h3>
+                        <p>State-of-the-art equipment and experienced team</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Portfolio Section -->
+@if (ViewBag.FeaturedPortfolios != null && ((List<Portfolio>)ViewBag.FeaturedPortfolios).Any())
+{
+    <section class="py-5">
+        <div class="container">
+            <div class="text-center mb-5" data-aos="fade-up">
+                <h2 class="display-5 fw-bold">Featured Work</h2>
+                <p class="lead text-muted">Showcasing our best dental transformations and treatments</p>
+            </div>
+            
+            <div class="row g-4">
+                @foreach (var portfolio in (List<Portfolio>)ViewBag.FeaturedPortfolios)
+                {
+                    <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="@(ViewBag.FeaturedPortfolios.IndexOf(portfolio) * 100)">
+                        <div class="custom-card h-100">
+                            @if (!string.IsNullOrEmpty(portfolio.ImagePath))
+                            {
+                                <img src="@portfolio.ImagePath" class="card-img-top" alt="@portfolio.Title" style="height: 250px; object-fit: cover;">
+                            }
+                            else if (!string.IsNullOrEmpty(portfolio.BeforeImagePath))
+                            {
+                                <img src="@portfolio.BeforeImagePath" class="card-img-top" alt="@portfolio.Title" style="height: 250px; object-fit: cover;">
+                            }
+                            else
+                            {
+                                <div class="bg-light d-flex align-items-center justify-content-center" style="height: 250px;">
+                                    <i class="fas fa-image fa-3x text-muted"></i>
+                                </div>
+                            }
+                            
+                            <div class="card-body">
+                                <span class="badge bg-primary mb-2">@portfolio.Category</span>
+                                <h5 class="card-title">@portfolio.Title</h5>
+                                <p class="card-text text-muted">@(portfolio.Description.Length > 100 ? portfolio.Description.Substring(0, 100) + "..." : portfolio.Description)</p>
+                                <a href="@Url.Action("PortfolioDetails", "Public", new { id = portfolio.PortfolioId })" class="btn btn-outline-primary">
+                                    <i class="fas fa-eye me-2"></i>View Details
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+            
+            <div class="text-center mt-5" data-aos="fade-up">
+                <a href="@Url.Action("Gallery", "Public")" class="btn btn-primary-custom btn-lg">
+                    <i class="fas fa-images me-2"></i>View Full Gallery
+                </a>
+            </div>
+        </div>
+    </section>
+}
+
+<!-- Services Section -->
+@if (ViewBag.Services != null && ((List<Service>)ViewBag.Services).Any())
+{
+    <section class="py-5 bg-light">
+        <div class="container">
+            <div class="text-center mb-5" data-aos="fade-up">
+                <h2 class="display-5 fw-bold">Our Services</h2>
+                <p class="lead text-muted">Comprehensive dental care for all your needs</p>
+            </div>
+            
+            <div class="row g-4">
+                @foreach (var service in ((List<Service>)ViewBag.Services).Take(6))
+                {
+                    <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="@(ViewBag.Services.IndexOf(service) * 100)">
+                        <div class="custom-card text-center h-100">
+                            <div class="card-body p-4">
+                                @if (!string.IsNullOrEmpty(service.ImagePath))
+                                {
+                                    <img src="@service.ImagePath" alt="@service.ServiceName" class="mb-3 rounded" style="width: 80px; height: 80px; object-fit: cover;">
+                                }
+                                else
+                                {
+                                    <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                                        <i class="fas fa-tooth fa-2x text-primary"></i>
+                                    </div>
+                                }
+                                
+                                <h5 class="card-title">@service.ServiceName</h5>
+                                <p class="card-text text-muted">@(service.Description?.Length > 80 ? service.Description.Substring(0, 80) + "..." : service.Description)</p>
+                                
+                                @if (service.Price > 0)
+                                {
+                                    <div class="text-primary fw-bold mb-3">Starting from $@service.Price.ToString("F2")</div>
+                                }
+                                
+                                @if (service.IsPopular)
+                                {
+                                    <span class="badge bg-warning text-dark">Popular</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+            
+            <div class="text-center mt-5" data-aos="fade-up">
+                <a href="@Url.Action("Services", "Public")" class="btn btn-primary-custom btn-lg">
+                    <i class="fas fa-list me-2"></i>View All Services
+                </a>
+            </div>
+        </div>
+    </section>
+}
+
+<!-- Testimonials Section -->
+@if (ViewBag.Testimonials != null && ((List<Testimonial>)ViewBag.Testimonials).Any())
+{
+    <section class="py-5">
+        <div class="container">
+            <div class="text-center mb-5" data-aos="fade-up">
+                <h2 class="display-5 fw-bold">What Our Patients Say</h2>
+                <p class="lead text-muted">Real experiences from our valued patients</p>
+            </div>
+            
+            <div class="row g-4">
+                @foreach (var testimonial in ((List<Testimonial>)ViewBag.Testimonials).Take(3))
+                {
+                    <div class="col-lg-4" data-aos="fade-up" data-aos-delay="@(ViewBag.Testimonials.IndexOf(testimonial) * 100)">
+                        <div class="custom-card h-100">
+                            <div class="card-body p-4">
+                                <div class="d-flex align-items-center mb-3">
+                                    @if (!string.IsNullOrEmpty(testimonial.PatientImagePath))
+                                    {
+                                        <img src="@testimonial.PatientImagePath" alt="@testimonial.PatientName" class="rounded-circle me-3" style="width: 60px; height: 60px; object-fit: cover;">
+                                    }
+                                    else
+                                    {
+                                        <div class="bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 60px; height: 60px;">
+                                            <i class="fas fa-user fa-lg text-primary"></i>
+                                        </div>
+                                    }
+                                    
+                                    <div>
+                                        <h6 class="mb-0">@testimonial.PatientName</h6>
+                                        <div class="text-warning">
+                                            @for (int i = 1; i <= 5; i++)
+                                            {
+                                                <i class="fas fa-star@(i <= testimonial.Rating ? "" : "-o")"></i>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <p class="card-text">"@testimonial.Content"</p>
+                                
+                                @if (!string.IsNullOrEmpty(testimonial.TreatmentType))
+                                {
+                                    <small class="text-muted">Treatment: @testimonial.TreatmentType</small>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+}
+
+<!-- Call to Action Section -->
+<section class="py-5 bg-primary text-white">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8" data-aos="fade-right">
+                <h2 class="display-6 fw-bold mb-3">Ready to Transform Your Smile?</h2>
+                <p class="lead mb-0">Schedule your consultation today and take the first step towards a healthier, more beautiful smile.</p>
+            </div>
+            <div class="col-lg-4 text-lg-end" data-aos="fade-left">
+                <a href="@Url.Action("Contact", "Public")" class="btn btn-light btn-lg">
+                    <i class="fas fa-phone me-2"></i>Contact Us Now
+                </a>
+            </div>
+        </div>
+    </div>
+</section>

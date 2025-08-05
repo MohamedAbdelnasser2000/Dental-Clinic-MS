@@ -1,0 +1,219 @@
+@model IEnumerable<DentalClinicSystem.Models.InsuranceCompany>
+@{
+    ViewData["Title"] = "Insurance Companies Management";
+    Layout = "_DashboardLayout";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-shield-alt me-2 text-primary"></i>Insurance Companies</h2>
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="fas fa-plus me-2"></i>Add New Company
+    </a>
+</div>
+
+<!-- Search Section -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label">Search</label>
+                <input type="text" class="form-control" name="searchString" value="@ViewBag.SearchString" placeholder="Search companies by name, email, or phone...">
+            </div>
+            <div class="col-md-6 d-flex align-items-end">
+                <button type="submit" class="btn btn-outline-primary me-2">
+                    <i class="fas fa-search me-1"></i>Search
+                </button>
+                <a asp-action="Index" class="btn btn-outline-secondary">
+                    <i class="fas fa-undo me-1"></i>Reset
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Insurance Companies Table -->
+<div class="card">
+    <div class="card-body">
+        @if (Model.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Company Name</th>
+                            <th>Contact Info</th>
+                            <th>Coverage</th>
+                            <th>Max Coverage</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var company in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="company-icon me-3">
+                                            <i class="fas fa-shield-alt"></i>
+                                        </div>
+                                        <div>
+                                            <div class="fw-bold">@company.CompanyName</div>
+                                            @if (!string.IsNullOrEmpty(company.Address))
+                                            {
+                                                <small class="text-muted">@company.Address</small>
+                                            }
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(company.Email))
+                                    {
+                                        <div class="mb-1">
+                                            <i class="fas fa-envelope me-1 text-muted"></i>
+                                            <small>@company.Email</small>
+                                        </div>
+                                    }
+                                    @if (!string.IsNullOrEmpty(company.PhoneNumber))
+                                    {
+                                        <div>
+                                            <i class="fas fa-phone me-1 text-muted"></i>
+                                            <small>@company.PhoneNumber</small>
+                                        </div>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="text-center">
+                                        <div class="fw-bold text-success">@company.CoveragePercentage%</div>
+                                        <small class="text-muted">Coverage</small>
+                                    </div>
+                                </td>
+                                <td>
+                                    @if (company.MaxCoverageAmount.HasValue)
+                                    {
+                                        <div class="text-center">
+                                            <div class="fw-bold text-info">$@company.MaxCoverageAmount.Value.ToString("N0")</div>
+                                            <small class="text-muted">Max Amount</small>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">No Limit</span>
+                                    }
+                                </td>
+                                <td>
+                                    <span class="badge @(company.IsActive ? "bg-success" : "bg-danger")">
+                                        @(company.IsActive ? "Active" : "Inactive")
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a asp-action="Details" asp-route-id="@company.InsuranceCompanyId" class="btn btn-sm btn-outline-info" title="View Details">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a asp-action="Edit" asp-route-id="@company.InsuranceCompanyId" class="btn btn-sm btn-outline-warning" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@company.InsuranceCompanyId" class="btn btn-sm btn-outline-danger" title="Delete">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Summary Cards -->
+            <div class="row mt-4">
+                <div class="col-md-3">
+                    <div class="card bg-primary text-white">
+                        <div class="card-body text-center">
+                            <h5>Total Companies</h5>
+                            <h3>@Model.Count()</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-success text-white">
+                        <div class="card-body text-center">
+                            <h5>Active Companies</h5>
+                            <h3>@Model.Count(c => c.IsActive)</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-info text-white">
+                        <div class="card-body text-center">
+                            <h5>Avg Coverage</h5>
+                            <h3>@(Model.Any() ? Model.Average(c => c.CoveragePercentage).ToString("N0") : "0")%</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-warning text-white">
+                        <div class="card-body text-center">
+                            <h5>With Max Limit</h5>
+                            <h3>@Model.Count(c => c.MaxCoverageAmount.HasValue)</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            @if (ViewBag.TotalPages > 1)
+            {
+                <nav aria-label="Insurance companies pagination" class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        @if (ViewBag.CurrentPage > 1)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.CurrentPage - 1)" asp-route-searchString="@ViewBag.SearchString">Previous</a>
+                            </li>
+                        }
+
+                        @for (int i = Math.Max(1, ViewBag.CurrentPage - 2); i <= Math.Min(ViewBag.TotalPages, ViewBag.CurrentPage + 2); i++)
+                        {
+                            <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                                <a class="page-link" asp-action="Index" asp-route-page="@i" asp-route-searchString="@ViewBag.SearchString">@i</a>
+                            </li>
+                        }
+
+                        @if (ViewBag.CurrentPage < ViewBag.TotalPages)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.CurrentPage + 1)" asp-route-searchString="@ViewBag.SearchString">Next</a>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+            }
+        }
+        else
+        {
+            <div class="text-center py-5">
+                <i class="fas fa-shield-alt fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">No insurance companies found</h5>
+                <p class="text-muted">Start by adding your first insurance company.</p>
+                <a asp-action="Create" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>Add New Company
+                </a>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .company-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.2rem;
+    }
+</style>

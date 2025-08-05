@@ -1,0 +1,241 @@
+@model IEnumerable<DentalClinicSystem.Models.Appointment>
+@{
+    ViewData["Title"] = "Appointments Management";
+    Layout = "_DashboardLayout";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-calendar-alt me-2"></i>Appointments Management</h2>
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="fas fa-plus me-2"></i>Book New Appointment
+    </a>
+</div>
+
+<!-- Search and Filter Section -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-3">
+                <label class="form-label">Search</label>
+                <input type="text" name="searchString" value="@ViewBag.SearchString" class="form-control" placeholder="Search by patient, doctor..." />
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Doctor</label>
+                <select name="dentistId" class="form-select">
+                    <option value="">All Doctors</option>
+                    @foreach (var item in ViewBag.Dentists as SelectList)
+                    {
+                        <option value="@item.Value" selected="@item.Selected">@item.Text</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Date</label>
+                <input type="date" name="appointmentDate" value="@(ViewBag.AppointmentDate?.ToString("yyyy-MM-dd"))" class="form-control" />
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Status</label>
+                <select name="status" class="form-select">
+                    @foreach (var item in ViewBag.StatusList as SelectList)
+                    {
+                        <option value="@item.Value" selected="@item.Selected">@item.Text</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-3 d-flex align-items-end">
+                <button type="submit" class="btn btn-outline-primary me-2">
+                    <i class="fas fa-search me-1"></i>Search
+                </button>
+                <a asp-action="Index" class="btn btn-outline-secondary">
+                    <i class="fas fa-undo me-1"></i>Reset
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Results Summary -->
+<div class="alert alert-info">
+    <i class="fas fa-info-circle me-2"></i>
+    Total Appointments: @ViewBag.TotalCount | Page @ViewBag.CurrentPage of @ViewBag.TotalPages
+</div>
+
+<!-- Appointments Table -->
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Date & Time</th>
+                        <th>Patient</th>
+                        <th>Doctor</th>
+                        <th>Reason for Visit</th>
+                        <th>Service</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var appointment in Model)
+                    {
+                        <tr class="@(appointment.AppointmentDate.Date == DateTime.Today ? "table-warning" : "")">
+                            <td>
+                                <strong>@appointment.AppointmentDate.ToString("dd/MM/yyyy")</strong><br>
+                                <small class="text-muted">@appointment.StartTime.ToString(@"hh\:mm") - @appointment.EndTime.ToString(@"hh\:mm")</small>
+                            </td>
+                            <td>
+                                <strong>@appointment.Patient.FullName</strong><br>
+                                <small class="text-muted">@appointment.Patient.PhoneNumber</small>
+                            </td>
+                            <td>
+                                <strong>@appointment.Dentist.FullName</strong><br>
+                                <small class="text-muted">@appointment.Dentist.Specialization</small>
+                            </td>
+                            <td>@appointment.ReasonForVisit</td>
+                            <td>
+                                @if (appointment.Service != null)
+                                {
+                                    <span class="badge bg-info">@appointment.Service.ServiceName</span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">Not specified</span>
+                                }
+                            </td>
+                            <td>
+                                @switch (appointment.Status)
+                                {
+                                    case "Confirmed":
+                                    case "مؤكد":
+                                        <span class="badge bg-success">Confirmed</span>
+                                        break;
+                                    case "Cancelled":
+                                    case "ملغي":
+                                        <span class="badge bg-danger">Cancelled</span>
+                                        break;
+                                    case "Completed":
+                                    case "تم":
+                                        <span class="badge bg-primary">Completed</span>
+                                        break;
+                                    case "No Show":
+                                    case "لم يحضر":
+                                        <span class="badge bg-warning">No Show</span>
+                                        break;
+                                    default:
+                                        <span class="badge bg-secondary">@appointment.Status</span>
+                                        break;
+                                }
+                            </td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <a asp-action="Details" asp-route-id="@appointment.AppointmentId" class="btn btn-sm btn-outline-info" title="View Details">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    @if (appointment.Status != "Completed" && appointment.Status != "تم" && appointment.Status != "Cancelled" && appointment.Status != "ملغي")
+                                    {
+                                        <a asp-action="Edit" asp-route-id="@appointment.AppointmentId" class="btn btn-sm btn-outline-warning" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@appointment.AppointmentId" class="btn btn-sm btn-outline-danger" title="Cancel">
+                                            <i class="fas fa-times"></i>
+                                        </a>
+                                    }
+                                    @if ((appointment.Status == "Confirmed" || appointment.Status == "مؤكد") && appointment.AppointmentDate.Date <= DateTime.Today)
+                                    {
+                                        <a asp-controller="Treatments" asp-action="Create" asp-route-appointmentId="@appointment.AppointmentId" class="btn btn-sm btn-outline-success" title="Start Treatment">
+                                            <i class="fas fa-play"></i>
+                                        </a>
+                                    }
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        @if (ViewBag.TotalPages > 1)
+        {
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    @if (ViewBag.CurrentPage > 1)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="?page=@(ViewBag.CurrentPage - 1)&searchString=@ViewBag.SearchString&dentistId=@ViewBag.DentistId&appointmentDate=@ViewBag.AppointmentDate&status=@ViewBag.Status&pageSize=@ViewBag.PageSize">Previous</a>
+                        </li>
+                    }
+
+                    @for (int i = Math.Max(1, ViewBag.CurrentPage - 2); i <= Math.Min(ViewBag.TotalPages, ViewBag.CurrentPage + 2); i++)
+                    {
+                        <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                            <a class="page-link" href="?page=@i&searchString=@ViewBag.SearchString&dentistId=@ViewBag.DentistId&appointmentDate=@ViewBag.AppointmentDate&status=@ViewBag.Status&pageSize=@ViewBag.PageSize">@i</a>
+                        </li>
+                    }
+
+                    @if (ViewBag.CurrentPage < ViewBag.TotalPages)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="?page=@(ViewBag.CurrentPage + 1)&searchString=@ViewBag.SearchString&dentistId=@ViewBag.DentistId&appointmentDate=@ViewBag.AppointmentDate&status=@ViewBag.Status&pageSize=@ViewBag.PageSize">Next</a>
+                        </li>
+                    }
+                </ul>
+            </nav>
+        }
+    </div>
+</div>
+
+<!-- Today's Appointments Summary -->
+@{
+    var todayAppointments = Model.Where(a => a.AppointmentDate.Date == DateTime.Today).ToList();
+}
+
+@if (todayAppointments.Any())
+{
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card border-primary">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-calendar-day me-2"></i>Today's Appointments (@todayAppointments.Count)</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        @foreach (var appointment in todayAppointments.OrderBy(a => a.StartTime))
+                        {
+                            <div class="col-md-6 col-lg-4 mb-3">
+                                <div class="card border-left-primary">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between">
+                                            <div>
+                                                <h6 class="mb-1">@appointment.StartTime.ToString(@"hh\:mm")</h6>
+                                                <p class="mb-1"><strong>@appointment.Patient.FullName</strong></p>
+                                                <small class="text-muted">Dr. @appointment.Dentist.FullName</small>
+                                            </div>
+                                            <div>
+                                                @switch (appointment.Status)
+                                                {
+                                                    case "Confirmed":
+                                                    case "مؤكد":
+                                                        <span class="badge bg-success">Confirmed</span>
+                                                        break;
+                                                    case "Completed":
+                                                    case "تم":
+                                                        <span class="badge bg-primary">Completed</span>
+                                                        break;
+                                                    default:
+                                                        <span class="badge bg-secondary">@appointment.Status</span>
+                                                        break;
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

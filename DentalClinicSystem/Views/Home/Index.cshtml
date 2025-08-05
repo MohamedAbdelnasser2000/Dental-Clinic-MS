@@ -1,0 +1,343 @@
+﻿@model DentalClinicSystem.Models.DashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+    Layout = User.Identity.IsAuthenticated ? "_DashboardLayout" : "_Layout";
+}
+
+<!-- Hero Section -->
+@if (!User.Identity.IsAuthenticated)
+{
+    <div class="bg-primary text-white py-5 mb-5 rounded">
+        <div class="container text-center">
+            <h1 class="display-4 mb-3">
+                <i class="fas fa-tooth me-3"></i>Dental Clinic Management System
+            </h1>
+            <p class="lead mb-4">Comprehensive and integrated system for managing dental clinics efficiently</p>
+            <a asp-controller="Account" asp-action="Login" class="btn btn-light btn-lg me-3">
+                <i class="fas fa-sign-in-alt me-2"></i>Login
+            </a>
+            <a asp-controller="Account" asp-action="Register" class="btn btn-outline-light btn-lg">
+                <i class="fas fa-user-plus me-2"></i>Register
+            </a>
+        </div>
+    </div>
+}
+
+@if (User.Identity.IsAuthenticated)
+{
+    <!-- Welcome Message -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <div class="card-body text-white p-4">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h2 class="mb-2">Welcome back, @User.Identity.Name!</h2>
+                            <p class="mb-0 opacity-75">Here's what's happening at your dental clinic today.</p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <i class="fas fa-tooth fa-4x opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="stats-card">
+                <div class="d-flex align-items-center">
+                    <div class="stats-icon" style="background: linear-gradient(135deg, #667eea, #764ba2);">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <div class="text-muted small fw-medium">Total Patients</div>
+                        <div class="h3 mb-1 fw-bold">@(Model?.TotalPatients ?? 0)</div>
+                        <div class="text-success small">
+                            <i class="fas fa-arrow-up"></i> Active patients
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="stats-card">
+                <div class="d-flex align-items-center">
+                    <div class="stats-icon" style="background: linear-gradient(135deg, #11998e, #38ef7d);">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <div class="text-muted small fw-medium">Today's Appointments</div>
+                        <div class="h3 mb-1 fw-bold">@(Model?.TodaysAppointments?.Count ?? 0)</div>
+                        <div class="text-info small">
+                            <i class="fas fa-clock"></i> Today's schedule
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="stats-card">
+                <div class="d-flex align-items-center">
+                    <div class="stats-icon" style="background: linear-gradient(135deg, #667eea, #764ba2);">
+                        <i class="fas fa-procedures"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <div class="text-muted small fw-medium">Total Services</div>
+                        <div class="h3 mb-1 fw-bold">@(Model?.TotalServices ?? 0)</div>
+                        <div class="text-success small">
+                            <i class="fas fa-arrow-up"></i> Available services
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="stats-card">
+                <div class="d-flex align-items-center">
+                    <div class="stats-icon" style="background: linear-gradient(135deg, #f093fb, #f5576c);">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <div class="text-muted small fw-medium">Monthly Revenue</div>
+                        <div class="h3 mb-1 fw-bold">$@(Model?.MonthlyRevenue.ToString("N0") ?? "0")</div>
+                        <div class="text-success small">
+                            <i class="fas fa-arrow-up"></i> This month
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <a asp-controller="Patients" asp-action="Create" class="btn btn-outline-primary w-100 py-4 border-2 text-decoration-none">
+                <i class="fas fa-user-plus fa-2x d-block mb-2"></i>
+                <span class="fw-medium">Add New Patient</span>
+            </a>
+        </div>
+        <div class="col-md-3 mb-3">
+            <a asp-controller="Appointments" asp-action="Create" class="btn btn-outline-success w-100 py-4 border-2 text-decoration-none">
+                <i class="fas fa-calendar-plus fa-2x d-block mb-2"></i>
+                <span class="fw-medium">Book Appointment</span>
+            </a>
+        </div>
+        <div class="col-md-3 mb-3">
+            <a asp-controller="Treatments" asp-action="Create" class="btn btn-outline-info w-100 py-4 border-2 text-decoration-none">
+                <i class="fas fa-plus-circle fa-2x d-block mb-2"></i>
+                <span class="fw-medium">Add Treatment</span>
+            </a>
+        </div>
+        <div class="col-md-3 mb-3">
+            <a asp-controller="Invoices" asp-action="Create" class="btn btn-outline-warning w-100 py-4 border-2 text-decoration-none">
+                <i class="fas fa-file-invoice-dollar fa-2x d-block mb-2"></i>
+                <span class="fw-medium">Create Invoice</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Dashboard Content -->
+    <div class="row">
+        <!-- Recent Appointments -->
+        <div class="col-lg-8 mb-4">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-calendar-alt me-2 text-primary"></i>Today's Appointments</h5>
+                    <a asp-controller="Appointments" asp-action="Index" class="btn btn-sm btn-primary">View All</a>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="fw-semibold">Time</th>
+                                    <th class="fw-semibold">Patient</th>
+                                    <th class="fw-semibold">Doctor</th>
+                                    <th class="fw-semibold">Treatment</th>
+                                    <th class="fw-semibold">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model?.TodaysAppointments?.Any() == true)
+                                {
+                                    @foreach (var appointment in Model.TodaysAppointments)
+                                    {
+                                        <tr>
+                                            <td><strong class="text-primary">@appointment.StartTime.ToString(@"hh\:mm")</strong></td>
+                                            <td>@appointment.Patient?.FullName</td>
+                                            <td>د. @(appointment.Dentist?.FirstName + " " + appointment.Dentist?.LastName ?? "غير محدد")</td>
+                                            <td>@appointment.Service?.ServiceName</td>
+                                            <td>
+                                                @switch (appointment.Status)
+                                                {
+                                                    case "مؤكد":
+                                                        <span class="badge bg-success">مؤكد</span>
+                                                        break;
+                                                    case "في الانتظار":
+                                                        <span class="badge bg-warning">في الانتظار</span>
+                                                        break;
+                                                    case "تم":
+                                                        <span class="badge bg-info">تم</span>
+                                                        break;
+                                                    case "ملغي":
+                                                        <span class="badge bg-danger">ملغي</span>
+                                                        break;
+                                                    default:
+                                                        <span class="badge bg-secondary">@appointment.Status</span>
+                                                        break;
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="5" class="text-center text-muted py-4">
+                                            <i class="fas fa-calendar-times fa-2x mb-2 d-block"></i>
+                                            No appointments scheduled for today
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activities -->
+        <div class="col-lg-4 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-bell me-2 text-primary"></i>Recent Activities</h5>
+                </div>
+                <div class="card-body">
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-marker bg-success"></div>
+                            <div class="timeline-content">
+                                <h6 class="mb-1 fw-semibold">New Patient</h6>
+                                <p class="mb-1 small text-muted">Registered new patient: John Smith</p>
+                                <small class="text-muted"><i class="fas fa-clock me-1"></i>5 minutes ago</small>
+                            </div>
+                        </div>
+
+                        <div class="timeline-item">
+                            <div class="timeline-marker bg-info"></div>
+                            <div class="timeline-content">
+                                <h6 class="mb-1 fw-semibold">Appointment Completed</h6>
+                                <p class="mb-1 small text-muted">Finished appointment for Emily Johnson</p>
+                                <small class="text-muted"><i class="fas fa-clock me-1"></i>15 minutes ago</small>
+                            </div>
+                        </div>
+
+                        <div class="timeline-item">
+                            <div class="timeline-marker bg-warning"></div>
+                            <div class="timeline-content">
+                                <h6 class="mb-1 fw-semibold">New Invoice</h6>
+                                <p class="mb-1 small text-muted">Created invoice for $500</p>
+                                <small class="text-muted"><i class="fas fa-clock me-1"></i>30 minutes ago</small>
+                            </div>
+                        </div>
+
+                        <div class="timeline-item">
+                            <div class="timeline-marker bg-primary"></div>
+                            <div class="timeline-content">
+                                <h6 class="mb-1 fw-semibold">New Appointment</h6>
+                                <p class="mb-1 small text-muted">Booked appointment for David Wilson</p>
+                                <small class="text-muted"><i class="fas fa-clock me-1"></i>1 hour ago</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <!-- Features Section -->
+    <div class="row mb-5">
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-users fa-3x text-primary"></i>
+                    </div>
+                    <h5 class="card-title fw-bold">Patient Management</h5>
+                    <p class="card-text text-muted">Comprehensive system for managing patient data, medical history, and medical files</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-calendar-alt fa-3x text-success"></i>
+                    </div>
+                    <h5 class="card-title fw-bold">Appointment Scheduling</h5>
+                    <p class="card-text text-muted">Smart appointment scheduling system with automatic reminder notifications</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-file-invoice fa-3x text-info"></i>
+                    </div>
+                    <h5 class="card-title fw-bold">Invoice Management</h5>
+                    <p class="card-text text-muted">Integrated billing and payment system with medical insurance support</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-procedures fa-3x text-warning"></i>
+                    </div>
+                    <h5 class="card-title fw-bold">Treatment Management</h5>
+                    <p class="card-text text-muted">Detailed recording of treatments and medical prescriptions</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-chart-bar fa-3x text-danger"></i>
+                    </div>
+                    <h5 class="card-title fw-bold">Reports & Analytics</h5>
+                    <p class="card-text text-muted">Comprehensive and detailed reports on clinic performance</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-shield-alt fa-3x text-secondary"></i>
+                    </div>
+                    <h5 class="card-title fw-bold">Security & Privacy</h5>
+                    <p class="card-text text-muted">High-level protection for patient data with advanced permission system</p>
+                </div>
+            </div>
+        </div>
+    </div>
+}

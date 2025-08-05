@@ -1,0 +1,234 @@
+@model DentalClinicSystem.Models.Appointment
+@{
+    ViewData["Title"] = "Book New Appointment";
+    Layout = "_DashboardLayout";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-calendar-plus me-2"></i>Book New Appointment</h2>
+    <a asp-action="Index" class="btn btn-secondary">
+        <i class="fas fa-arrow-left me-2"></i>Back to List
+    </a>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-calendar-alt me-2"></i>Appointment Details</h5>
+            </div>
+            <div class="card-body">
+                <form asp-action="Create" method="post">
+                    <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            @TempData["ErrorMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    <!-- Patient and Doctor Selection -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="PatientId" class="form-label">Patient *</label>
+                            <select asp-for="PatientId" class="form-select" asp-items="ViewBag.Patients" required>
+                                <option value="">Select Patient</option>
+                            </select>
+                            <span asp-validation-for="PatientId" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="DentistId" class="form-label">Doctor *</label>
+                            <select asp-for="DentistId" class="form-select" asp-items="ViewBag.Dentists" required>
+                                <option value="">Select Doctor</option>
+                            </select>
+                            <span asp-validation-for="DentistId" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <!-- Date and Time -->
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="AppointmentDate" class="form-label">Appointment Date *</label>
+                            <input asp-for="AppointmentDate" type="date" class="form-control" required min="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                            <span asp-validation-for="AppointmentDate" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="StartTime" class="form-label">Start Time *</label>
+                            <input asp-for="StartTime" type="time" class="form-control" required />
+                            <span asp-validation-for="StartTime" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="EndTime" class="form-label">End Time *</label>
+                            <input asp-for="EndTime" type="time" class="form-control" required />
+                            <span asp-validation-for="EndTime" class="text-danger"></span>
+                        </div>
+                    </div>
+                    
+                    <!-- Service and Reason -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="ServiceId" class="form-label">Service Type</label>
+                            <select asp-for="ServiceId" class="form-select" asp-items="ViewBag.Services">
+                                <option value="">Select Service Type (Optional)</option>
+                            </select>
+                            <span asp-validation-for="ServiceId" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="ReasonForVisit" class="form-label">Reason for Visit</label>
+                            <input asp-for="ReasonForVisit" class="form-control" placeholder="Enter reason for visit" />
+                            <span asp-validation-for="ReasonForVisit" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <!-- Notes -->
+                    <div class="mb-3">
+                        <label asp-for="Notes" class="form-label">Notes</label>
+                        <textarea asp-for="Notes" class="form-control" rows="3" placeholder="Enter any additional notes"></textarea>
+                        <span asp-validation-for="Notes" class="text-danger"></span>
+                    </div>
+
+                    <div class="d-flex justify-content-end">
+                        <a asp-action="Index" class="btn btn-secondary me-2">
+                            <i class="fas fa-times me-2"></i>Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>Book Appointment
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <!-- Quick Patient Add -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="fas fa-user-plus me-2"></i>Quick Patient Add</h6>
+            </div>
+            <div class="card-body">
+                <p class="small text-muted">If you can't find the patient in the list, you can add them first</p>
+                <a asp-controller="Patients" asp-action="Create" class="btn btn-outline-primary w-100" target="_blank">
+                    <i class="fas fa-plus me-2"></i>Add New Patient
+                </a>
+            </div>
+        </div>
+
+        <!-- Appointment Guidelines -->
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>Booking Guidelines</h6>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled small">
+                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Make sure to select the appropriate date and time</li>
+                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Check for conflicts with other appointments</li>
+                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Add reason for visit to facilitate preparation</li>
+                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Appointment can be modified later if needed</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        $(document).ready(function() {
+            // Auto-calculate end time based on service duration
+            $('#ServiceId').on('change', function() {
+                var serviceId = $(this).val();
+                if (serviceId) {
+                    // You can add AJAX call here to get service duration and auto-set end time
+                    // For now, we'll set a default 30-minute duration
+                    var startTimeInput = $('#StartTime');
+                    var endTimeInput = $('#EndTime');
+
+                    if (startTimeInput.val()) {
+                        var startTime = new Date('2000-01-01 ' + startTimeInput.val());
+                        var endTime = new Date(startTime.getTime() + 30 * 60000); // Add 30 minutes
+
+                        var hours = endTime.getHours().toString().padStart(2, '0');
+                        var minutes = endTime.getMinutes().toString().padStart(2, '0');
+                        endTimeInput.val(hours + ':' + minutes);
+                    }
+                }
+            });
+
+            // Auto-calculate end time when start time changes
+            $('#StartTime').on('change', function() {
+                var startTimeInput = $(this);
+                var endTimeInput = $('#EndTime');
+
+                if (startTimeInput.val() && !endTimeInput.val()) {
+                    var startTime = new Date('2000-01-01 ' + startTimeInput.val());
+                    var endTime = new Date(startTime.getTime() + 30 * 60000); // Add 30 minutes
+
+                    var hours = endTime.getHours().toString().padStart(2, '0');
+                    var minutes = endTime.getMinutes().toString().padStart(2, '0');
+                    endTimeInput.val(hours + ':' + minutes);
+                }
+            });
+
+            // Validate that end time is after start time
+            $('#EndTime').on('change', function() {
+                var startTime = $('#StartTime').val();
+                var endTime = $(this).val();
+
+                if (startTime && endTime && endTime <= startTime) {
+                    alert('End time must be after start time');
+                    $(this).val('');
+                }
+            });
+
+            // Form validation before submit
+            $('form').on('submit', function(e) {
+                var isValid = true;
+                var errorMessage = '';
+
+                // Check required fields
+                if (!$('#PatientId').val()) {
+                    isValid = false;
+                    errorMessage += 'Please select a patient.\n';
+                }
+
+                if (!$('#DentistId').val()) {
+                    isValid = false;
+                    errorMessage += 'Please select a doctor.\n';
+                }
+
+                if (!$('#AppointmentDate').val()) {
+                    isValid = false;
+                    errorMessage += 'Please select an appointment date.\n';
+                }
+
+                if (!$('#StartTime').val()) {
+                    isValid = false;
+                    errorMessage += 'Please select a start time.\n';
+                }
+
+                if (!$('#EndTime').val()) {
+                    isValid = false;
+                    errorMessage += 'Please select an end time.\n';
+                }
+
+                // Check if end time is after start time
+                var startTime = $('#StartTime').val();
+                var endTime = $('#EndTime').val();
+                if (startTime && endTime && endTime <= startTime) {
+                    isValid = false;
+                    errorMessage += 'End time must be after start time.\n';
+                }
+
+                if (!isValid) {
+                    e.preventDefault();
+                    alert(errorMessage);
+                    return false;
+                }
+            });
+        });
+    </script>
+}

@@ -1,0 +1,234 @@
+@model DentalClinicSystem.Models.InsuranceCompany
+@{
+    ViewData["Title"] = "Edit Insurance Company";
+    Layout = "_DashboardLayout";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-edit me-2 text-primary"></i>Edit Insurance Company</h2>
+    <a asp-action="Index" class="btn btn-secondary">
+        <i class="fas fa-arrow-left me-2"></i>Back to List
+    </a>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-shield-alt me-2"></i>Company Information</h5>
+            </div>
+            <div class="card-body">
+                <form asp-action="Edit" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                    
+                    <input type="hidden" asp-for="InsuranceCompanyId" />
+                    <input type="hidden" asp-for="CreatedAt" />
+                    
+                    <!-- Basic Information -->
+                    <h6 class="text-primary mb-3"><i class="fas fa-building me-2"></i>Basic Information</h6>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="CompanyName" class="form-label">Company Name *</label>
+                            <input asp-for="CompanyName" class="form-control" placeholder="Enter company name" required />
+                            <span asp-validation-for="CompanyName" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="PhoneNumber" class="form-label">Phone Number</label>
+                            <input asp-for="PhoneNumber" class="form-control" placeholder="Enter phone number" />
+                            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Email" class="form-label">Email Address</label>
+                            <input asp-for="Email" type="email" class="form-control" placeholder="Enter email address" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <div class="form-check mt-4">
+                                <input asp-for="IsActive" class="form-check-input" type="checkbox" />
+                                <label asp-for="IsActive" class="form-check-label">
+                                    Active Status
+                                </label>
+                            </div>
+                            <div class="form-text">Check this box if the company is currently active</div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label asp-for="Address" class="form-label">Address</label>
+                        <textarea asp-for="Address" class="form-control" rows="2" placeholder="Enter company address"></textarea>
+                        <span asp-validation-for="Address" class="text-danger"></span>
+                    </div>
+                    
+                    <!-- Coverage Information -->
+                    <h6 class="text-primary mb-3 mt-4"><i class="fas fa-percentage me-2"></i>Coverage Information</h6>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="CoveragePercentage" class="form-label">Coverage Percentage (%)</label>
+                            <div class="input-group">
+                                <input asp-for="CoveragePercentage" type="number" step="0.01" min="0" max="100" class="form-control" placeholder="0.00" />
+                                <span class="input-group-text">%</span>
+                            </div>
+                            <span asp-validation-for="CoveragePercentage" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="MaxCoverageAmount" class="form-label">Maximum Coverage Amount</label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input asp-for="MaxCoverageAmount" type="number" step="0.01" min="0" class="form-control" placeholder="0.00" />
+                            </div>
+                            <div class="form-text">Leave empty for unlimited coverage</div>
+                            <span asp-validation-for="MaxCoverageAmount" class="text-danger"></span>
+                        </div>
+                    </div>
+                    
+                    <!-- Additional Information -->
+                    <h6 class="text-primary mb-3 mt-4"><i class="fas fa-sticky-note me-2"></i>Additional Information</h6>
+                    <div class="mb-3">
+                        <label asp-for="Notes" class="form-label">Notes</label>
+                        <textarea asp-for="Notes" class="form-control" rows="3" placeholder="Enter any additional notes or comments"></textarea>
+                        <span asp-validation-for="Notes" class="text-danger"></span>
+                    </div>
+                    
+                    <div class="d-flex justify-content-end mt-4">
+                        <a asp-action="Index" class="btn btn-secondary me-2">Cancel</a>
+                        <a asp-action="Details" asp-route-id="@Model.InsuranceCompanyId" class="btn btn-info me-2">View Details</a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>Update Company
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>Current Information</h6>
+            </div>
+            <div class="card-body">
+                <div class="text-center mb-3">
+                    <i class="fas fa-shield-alt fa-3x text-primary mb-2"></i>
+                    <h6 class="text-primary">@Model.CompanyName</h6>
+                    <span class="badge @(Model.IsActive ? "bg-success" : "bg-danger")">
+                        @(Model.IsActive ? "Active" : "Inactive")
+                    </span>
+                </div>
+                
+                <div class="row text-center">
+                    <div class="col-6">
+                        <div class="border-end">
+                            <h5 class="text-success mb-1">@Model.CoveragePercentage.ToString("F1")%</h5>
+                            <small class="text-muted">Coverage</small>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        @if (Model.MaxCoverageAmount.HasValue)
+                        {
+                            <h5 class="text-info mb-1">@Model.MaxCoverageAmount.Value.ToString("C0")</h5>
+                            <small class="text-muted">Max Coverage</small>
+                        }
+                        else
+                        {
+                            <h5 class="text-muted mb-1">∞</h5>
+                            <small class="text-muted">No Limit</small>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="fas fa-calculator me-2"></i>Coverage Calculator</h6>
+            </div>
+            <div class="card-body">
+                <div class="mb-2">
+                    <label class="form-label small">Treatment Cost ($)</label>
+                    <input type="number" id="treatmentCost" class="form-control form-control-sm" placeholder="0.00" step="0.01">
+                </div>
+                <div class="mb-2">
+                    <label class="form-label small">Coverage % (from form above)</label>
+                    <input type="number" id="coveragePercent" class="form-control form-control-sm" placeholder="0" min="0" max="100">
+                </div>
+                <button type="button" class="btn btn-sm btn-outline-success w-100" onclick="calculateCoverage()">
+                    Calculate Coverage
+                </button>
+                <div id="coverageResult" class="mt-2 text-center"></div>
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="fas fa-lightbulb me-2"></i>Guidelines</h6>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <h6><i class="fas fa-info-circle me-2"></i>Tips:</h6>
+                    <ul class="mb-0 small">
+                        <li>Verify all contact information</li>
+                        <li>Update coverage percentages carefully</li>
+                        <li>Set realistic maximum coverage amounts</li>
+                        <li>Keep notes updated for reference</li>
+                    </ul>
+                </div>
+                
+                <div class="alert alert-warning">
+                    <h6><i class="fas fa-exclamation-triangle me-2"></i>Important:</h6>
+                    <ul class="mb-0 small">
+                        <li>Changes affect all patients using this insurance</li>
+                        <li>Deactivating may impact patient treatments</li>
+                        <li>Verify changes with insurance provider</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        function calculateCoverage() {
+            const cost = parseFloat(document.getElementById('treatmentCost').value) || 0;
+            const percentage = parseFloat(document.getElementById('coveragePercent').value) || 0;
+            
+            if (cost > 0 && percentage > 0) {
+                const coverage = (cost * percentage / 100).toFixed(2);
+                const patientPays = (cost - coverage).toFixed(2);
+                
+                document.getElementById('coverageResult').innerHTML = `
+                    <div class="small">
+                        <strong>Insurance Covers:</strong> $${coverage}<br>
+                        <strong>Patient Pays:</strong> $${patientPays}
+                    </div>
+                `;
+            } else {
+                document.getElementById('coverageResult').innerHTML = '';
+            }
+        }
+        
+        // Auto-calculate when values change
+        document.getElementById('treatmentCost').addEventListener('input', calculateCoverage);
+        document.getElementById('coveragePercent').addEventListener('input', calculateCoverage);
+        
+        // Sync coverage percentage from form
+        document.querySelector('input[name="CoveragePercentage"]').addEventListener('input', function() {
+            document.getElementById('coveragePercent').value = this.value;
+            calculateCoverage();
+        });
+        
+        // Initialize coverage percentage
+        document.addEventListener('DOMContentLoaded', function() {
+            const formCoverage = document.querySelector('input[name="CoveragePercentage"]').value;
+            document.getElementById('coveragePercent').value = formCoverage;
+        });
+    </script>
+}

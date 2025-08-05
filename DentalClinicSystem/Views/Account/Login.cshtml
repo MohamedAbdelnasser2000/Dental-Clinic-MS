@@ -1,0 +1,82 @@
+@model DentalClinicSystem.ViewModels.LoginViewModel
+@{
+    ViewData["Title"] = "تسجيل الدخول";
+    Layout = "_Layout";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-4">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white text-center">
+                <h4><i class="fas fa-sign-in-alt me-2"></i>تسجيل الدخول</h4>
+            </div>
+            <div class="card-body">
+                <form asp-action="Login" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                    
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label"></label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                            <input asp-for="Email" class="form-control" placeholder="أدخل البريد الإلكتروني" />
+                        </div>
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label asp-for="Password" class="form-label"></label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                            <input asp-for="Password" class="form-control" placeholder="أدخل كلمة المرور" />
+                        </div>
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+                    
+                    <div class="mb-3 form-check">
+                        <input asp-for="RememberMe" class="form-check-input" />
+                        <label asp-for="RememberMe" class="form-check-label"></label>
+                    </div>
+                    
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-sign-in-alt me-2"></i>تسجيل الدخول
+                        </button>
+                    </div>
+                </form>
+                
+                <hr>
+                
+                <div class="text-center">
+                    <p class="mb-0">ليس لديك حساب؟ <a asp-action="Register" class="text-decoration-none">إنشاء حساب جديد</a></p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-4">
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>حسابات تجريبية</h6>
+                </div>
+                <div class="card-body">
+                    <small class="text-muted">
+                        <strong>مدير النظام:</strong><br>
+                        البريد: admin@dentalclinic.com<br>
+                        كلمة المرور: Admin123!<br><br>
+                        
+                        <strong>طبيب:</strong><br>
+                        البريد: doctor@dentalclinic.com<br>
+                        كلمة المرور: Doctor123!<br><br>
+                        
+                        <strong>موظف الاستقبال:</strong><br>
+                        البريد: receptionist@dentalclinic.com<br>
+                        كلمة المرور: Reception123!
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

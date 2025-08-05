@@ -1,0 +1,231 @@
+@model IEnumerable<DentalClinicSystem.Models.Invoice>
+@{
+    ViewData["Title"] = "Invoices Management";
+    Layout = "_DashboardLayout";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-file-invoice me-2 text-primary"></i>Invoices Management</h2>
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="fas fa-plus me-2"></i>Create New Invoice
+    </a>
+</div>
+
+<!-- Summary Cards -->
+@if (Model.Any())
+{
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body text-center">
+                    <h5>Total Invoices</h5>
+                    <h3>@Model.Count()</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body text-center">
+                    <h5>Total Amount</h5>
+                    <h3>$@Model.Sum(i => i.TotalAmount).ToString("N0")</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body text-center">
+                    <h5>Paid Amount</h5>
+                    <h3>$@Model.Sum(i => i.PaidAmount).ToString("N0")</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body text-center">
+                    <h5>Outstanding</h5>
+                    <h3>$@Model.Sum(i => i.TotalAmount - i.PaidAmount).ToString("N0")</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Search and Filter Section -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label">Search</label>
+                <input type="text" class="form-control" name="searchString" value="@ViewBag.SearchString" placeholder="Search invoices...">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Patient</label>
+                @Html.DropDownList("patientId", ViewBag.Patients as SelectList, "All Patients", new { @class = "form-select" })
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Status</label>
+                <select name="status" class="form-select">
+                    <option value="">All Status</option>
+                    <option value="Paid" selected="@(ViewBag.Status == "Paid")">Paid</option>
+                    <option value="Unpaid" selected="@(ViewBag.Status == "Unpaid")">Unpaid</option>
+                    <option value="Partially Paid" selected="@(ViewBag.Status == "Partially Paid")">Partially Paid</option>
+                    <option value="Overdue" selected="@(ViewBag.Status == "Overdue")">Overdue</option>
+                </select>
+            </div>
+            <div class="col-md-3 d-flex align-items-end">
+                <button type="submit" class="btn btn-outline-primary me-2">
+                    <i class="fas fa-search me-1"></i>Search
+                </button>
+                <a asp-action="Index" class="btn btn-outline-secondary">
+                    <i class="fas fa-undo me-1"></i>Reset
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Invoices Table -->
+<div class="card">
+    <div class="card-body">
+        @if (Model.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Invoice #</th>
+                            <th>Date</th>
+                            <th>Patient</th>
+                            <th>Total Amount</th>
+                            <th>Paid Amount</th>
+                            <th>Outstanding</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var invoice in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <strong class="text-primary">@invoice.InvoiceNumber</strong>
+                                </td>
+                                <td>@invoice.InvoiceDate.ToString("dd/MM/yyyy")</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-user-circle me-2 text-muted"></i>
+                                        @invoice.Patient.FullName
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="fw-bold">$@invoice.TotalAmount.ToString("N2")</span>
+                                </td>
+                                <td>
+                                    <span class="fw-bold text-success">$@invoice.PaidAmount.ToString("N2")</span>
+                                </td>
+                                <td>
+                                    @{
+                                        var outstanding = invoice.TotalAmount - invoice.PaidAmount;
+                                    }
+                                    @if (outstanding > 0)
+                                    {
+                                        <span class="fw-bold text-danger">$@outstanding.ToString("N2")</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">$0.00</span>
+                                    }
+                                </td>
+                                <td>
+                                    @switch (invoice.Status)
+                                    {
+                                        case "Paid":
+                                            <span class="badge bg-success">Paid</span>
+                                            break;
+                                        case "Unpaid":
+                                            <span class="badge bg-danger">Unpaid</span>
+                                            break;
+                                        case "Partially Paid":
+                                            <span class="badge bg-warning">Partially Paid</span>
+                                            break;
+                                        case "Overdue":
+                                            <span class="badge bg-dark">Overdue</span>
+                                            break;
+                                        default:
+                                            <span class="badge bg-secondary">@invoice.Status</span>
+                                            break;
+                                    }
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a asp-action="Details" asp-route-id="@invoice.InvoiceId" class="btn btn-sm btn-outline-info" title="View Details">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a asp-action="Edit" asp-route-id="@invoice.InvoiceId" class="btn btn-sm btn-outline-warning" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <button type="button" class="btn btn-sm btn-outline-success" title="Print" onclick="printInvoice(@invoice.InvoiceId)">
+                                            <i class="fas fa-print"></i>
+                                        </button>
+                                        <a asp-action="Delete" asp-route-id="@invoice.InvoiceId" class="btn btn-sm btn-outline-danger" title="Delete">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            @if (ViewBag.TotalPages > 1)
+            {
+                <nav aria-label="Invoices pagination" class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        @if (ViewBag.CurrentPage > 1)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.CurrentPage - 1)" asp-route-searchString="@ViewBag.SearchString" asp-route-patientId="@ViewBag.PatientId" asp-route-status="@ViewBag.Status">Previous</a>
+                            </li>
+                        }
+
+                        @for (int i = Math.Max(1, ViewBag.CurrentPage - 2); i <= Math.Min(ViewBag.TotalPages, ViewBag.CurrentPage + 2); i++)
+                        {
+                            <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                                <a class="page-link" asp-action="Index" asp-route-page="@i" asp-route-searchString="@ViewBag.SearchString" asp-route-patientId="@ViewBag.PatientId" asp-route-status="@ViewBag.Status">@i</a>
+                            </li>
+                        }
+
+                        @if (ViewBag.CurrentPage < ViewBag.TotalPages)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.CurrentPage + 1)" asp-route-searchString="@ViewBag.SearchString" asp-route-patientId="@ViewBag.PatientId" asp-route-status="@ViewBag.Status">Next</a>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+            }
+        }
+        else
+        {
+            <div class="text-center py-5">
+                <i class="fas fa-file-invoice fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">No invoices found</h5>
+                <p class="text-muted">Start by creating your first invoice.</p>
+                <a asp-action="Create" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>Create New Invoice
+                </a>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function printInvoice(invoiceId) {
+            // This would typically open a print-friendly version of the invoice
+            window.open('/Invoices/Print/' + invoiceId, '_blank');
+        }
+    </script>
+}

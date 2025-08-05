@@ -1,0 +1,168 @@
+@{
+    ViewData["Title"] = "Reports & Analytics";
+    Layout = "_DashboardLayout";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-chart-bar me-2 text-primary"></i>Reports & Analytics</h2>
+</div>
+
+<!-- Reports Categories -->
+<div class="row">
+    <!-- Dashboard Report -->
+    <div class="col-lg-4 col-md-6 mb-4">
+        <div class="card h-100 shadow-sm report-card">
+            <div class="card-body text-center">
+                <div class="report-icon mb-3">
+                    <i class="fas fa-tachometer-alt fa-3x text-primary"></i>
+                </div>
+                <h5 class="card-title">Dashboard Overview</h5>
+                <p class="card-text text-muted">Get a comprehensive overview of your clinic's performance with key metrics and statistics.</p>
+                <a asp-action="Dashboard" class="btn btn-primary">
+                    <i class="fas fa-chart-line me-2"></i>View Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Patients Report -->
+    <div class="col-lg-4 col-md-6 mb-4">
+        <div class="card h-100 shadow-sm report-card">
+            <div class="card-body text-center">
+                <div class="report-icon mb-3">
+                    <i class="fas fa-users fa-3x text-success"></i>
+                </div>
+                <h5 class="card-title">Patients Report</h5>
+                <p class="card-text text-muted">Analyze patient registration trends, demographics, and activity patterns.</p>
+                <a asp-action="Patients" class="btn btn-success">
+                    <i class="fas fa-user-friends me-2"></i>View Report
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Appointments Report -->
+    <div class="col-lg-4 col-md-6 mb-4">
+        <div class="card h-100 shadow-sm report-card">
+            <div class="card-body text-center">
+                <div class="report-icon mb-3">
+                    <i class="fas fa-calendar-alt fa-3x text-info"></i>
+                </div>
+                <h5 class="card-title">Appointments Report</h5>
+                <p class="card-text text-muted">Track appointment schedules, completion rates, and booking patterns.</p>
+                <a asp-action="Appointments" class="btn btn-info">
+                    <i class="fas fa-calendar-check me-2"></i>View Report
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Treatments Report -->
+    <div class="col-lg-4 col-md-6 mb-4">
+        <div class="card h-100 shadow-sm report-card">
+            <div class="card-body text-center">
+                <div class="report-icon mb-3">
+                    <i class="fas fa-procedures fa-3x text-warning"></i>
+                </div>
+                <h5 class="card-title">Treatments Report</h5>
+                <p class="card-text text-muted">Monitor treatment types, success rates, and procedure statistics.</p>
+                <a asp-action="Treatments" class="btn btn-warning">
+                    <i class="fas fa-tooth me-2"></i>View Report
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Financial Report -->
+    <div class="col-lg-4 col-md-6 mb-4">
+        <div class="card h-100 shadow-sm report-card">
+            <div class="card-body text-center">
+                <div class="report-icon mb-3">
+                    <i class="fas fa-dollar-sign fa-3x text-danger"></i>
+                </div>
+                <h5 class="card-title">Financial Report</h5>
+                <p class="card-text text-muted">Review revenue, payments, outstanding balances, and financial trends.</p>
+                <a asp-action="Financial" class="btn btn-danger">
+                    <i class="fas fa-money-bill-wave me-2"></i>View Report
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dentist Performance -->
+    <div class="col-lg-4 col-md-6 mb-4">
+        <div class="card h-100 shadow-sm report-card">
+            <div class="card-body text-center">
+                <div class="report-icon mb-3">
+                    <i class="fas fa-user-md fa-3x text-secondary"></i>
+                </div>
+                <h5 class="card-title">Dentist Performance</h5>
+                <p class="card-text text-muted">Evaluate dentist productivity, appointment completion rates, and performance metrics.</p>
+                <a asp-action="DentistPerformance" class="btn btn-secondary">
+                    <i class="fas fa-chart-pie me-2"></i>View Report
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Stats -->
+<div class="row mt-5">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Report Features</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-filter fa-2x text-primary me-3"></i>
+                            <div>
+                                <h6 class="mb-1">Advanced Filtering</h6>
+                                <small class="text-muted">Filter reports by date ranges, status, and categories</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-download fa-2x text-success me-3"></i>
+                            <div>
+                                <h6 class="mb-1">Export Options</h6>
+                                <small class="text-muted">Export reports to PDF, Excel, and CSV formats</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-clock fa-2x text-info me-3"></i>
+                            <div>
+                                <h6 class="mb-1">Real-time Data</h6>
+                                <small class="text-muted">All reports show real-time data from your clinic</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .report-card {
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        border: none;
+    }
+    
+    .report-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.15) !important;
+    }
+    
+    .report-icon {
+        height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+</style>

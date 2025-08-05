@@ -1,0 +1,367 @@
+@model DentalClinicSystem.Models.Patient
+@{
+    ViewData["Title"] = "تفاصيل المريض";
+    Layout = "_DashboardLayout";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-user me-2"></i>تفاصيل المريض: @Model.FullName</h2>
+    <div>
+        <a asp-action="Edit" asp-route-id="@Model.PatientId" class="btn btn-warning">
+            <i class="fas fa-edit me-2"></i>تعديل
+        </a>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-2"></i>العودة للقائمة
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Patient Information -->
+    <div class="col-lg-4 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-user me-2"></i>المعلومات الشخصية</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-borderless">
+                    <tr>
+                        <td><strong>الاسم الكامل:</strong></td>
+                        <td>@Model.FullName</td>
+                    </tr>
+                    <tr>
+                        <td><strong>النوع:</strong></td>
+                        <td>@Model.Gender</td>
+                    </tr>
+                    <tr>
+                        <td><strong>تاريخ الميلاد:</strong></td>
+                        <td>
+                            @if (Model.DateOfBirth.HasValue)
+                            {
+                                <text>@Model.DateOfBirth.Value.ToString("dd/MM/yyyy")</text>
+                                <br><small class="text-muted">العمر: @((DateTime.Now.Year - Model.DateOfBirth.Value.Year)) سنة</small>
+                            }
+                            else
+                            {
+                                <span class="text-muted">غير محدد</span>
+                            }
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>الرقم القومي:</strong></td>
+                        <td>@(Model.NationalId ?? "غير محدد")</td>
+                    </tr>
+                    <tr>
+                        <td><strong>رقم جواز السفر:</strong></td>
+                        <td>@(Model.PassportNumber ?? "غير محدد")</td>
+                    </tr>
+                    <tr>
+                        <td><strong>تاريخ التسجيل:</strong></td>
+                        <td>@Model.RegistrationDate.ToString("dd/MM/yyyy")</td>
+                    </tr>
+                    <tr>
+                        <td><strong>آخر زيارة:</strong></td>
+                        <td>
+                            @if (Model.LastVisit.HasValue)
+                            {
+                                <text>@Model.LastVisit.Value.ToString("dd/MM/yyyy")</text>
+                            }
+                            else
+                            {
+                                <span class="text-muted">لا توجد زيارات</span>
+                            }
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>الحالة:</strong></td>
+                        <td>
+                            @if (Model.IsActive)
+                            {
+                                <span class="badge bg-success">نشط</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">غير نشط</span>
+                            }
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- Contact Information -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-address-book me-2"></i>معلومات الاتصال</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-borderless">
+                    <tr>
+                        <td><strong>رقم الهاتف:</strong></td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(Model.PhoneNumber))
+                            {
+                                <a href="tel:@Model.PhoneNumber">@Model.PhoneNumber</a>
+                            }
+                            else
+                            {
+                                <span class="text-muted">غير محدد</span>
+                            }
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>البريد الإلكتروني:</strong></td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(Model.Email))
+                            {
+                                <a href="mailto:@Model.Email">@Model.Email</a>
+                            }
+                            else
+                            {
+                                <span class="text-muted">غير محدد</span>
+                            }
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>العنوان:</strong></td>
+                        <td>@(Model.Address ?? "غير محدد")</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- Insurance Information -->
+        @if (Model.InsuranceCompany != null)
+        {
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-shield-alt me-2"></i>معلومات التأمين</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-borderless">
+                        <tr>
+                            <td><strong>شركة التأمين:</strong></td>
+                            <td>@Model.InsuranceCompany.CompanyName</td>
+                        </tr>
+                        <tr>
+                            <td><strong>نسبة التغطية:</strong></td>
+                            <td>@Model.InsuranceCompany.CoveragePercentage%</td>
+                        </tr>
+                        <tr>
+                            <td><strong>الحد الأقصى:</strong></td>
+                            <td>@(Model.InsuranceCompany.MaxCoverageAmount?.ToString("N0") ?? "غير محدد") ج.م</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Medical Information and History -->
+    <div class="col-lg-8">
+        <!-- Medical Information -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-heartbeat me-2"></i>المعلومات الطبية</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-history me-2"></i>التاريخ المرضي</h6>
+                        <p class="text-muted">@(Model.MedicalHistory ?? "لا يوجد تاريخ مرضي مسجل")</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-exclamation-triangle me-2"></i>الحساسية من الأدوية</h6>
+                        <p class="text-muted">@(Model.Allergies ?? "لا توجد حساسية مسجلة")</p>
+                    </div>
+                </div>
+                @if (!string.IsNullOrEmpty(Model.Notes))
+                {
+                    <hr>
+                    <h6><i class="fas fa-sticky-note me-2"></i>ملاحظات</h6>
+                    <p class="text-muted">@Model.Notes</p>
+                }
+            </div>
+        </div>
+
+        <!-- Recent Appointments -->
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-calendar-alt me-2"></i>المواعيد الأخيرة</h5>
+                <a asp-controller="Appointments" asp-action="Create" asp-route-patientId="@Model.PatientId" class="btn btn-sm btn-primary">
+                    <i class="fas fa-plus me-1"></i>حجز موعد جديد
+                </a>
+            </div>
+            <div class="card-body">
+                @if (Model.Appointments.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>التاريخ</th>
+                                    <th>الوقت</th>
+                                    <th>الطبيب</th>
+                                    <th>سبب الزيارة</th>
+                                    <th>الحالة</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var appointment in Model.Appointments.OrderByDescending(a => a.AppointmentDate).Take(5))
+                                {
+                                    <tr>
+                                        <td>@appointment.AppointmentDate.ToString("dd/MM/yyyy")</td>
+                                        <td>@appointment.StartTime.ToString(@"hh\:mm")</td>
+                                        <td>@appointment.Dentist.FullName</td>
+                                        <td>@appointment.ReasonForVisit</td>
+                                        <td>
+                                            @switch (appointment.Status)
+                                            {
+                                                case "مؤكد":
+                                                    <span class="badge bg-success">مؤكد</span>
+                                                    break;
+                                                case "ملغي":
+                                                    <span class="badge bg-danger">ملغي</span>
+                                                    break;
+                                                case "تم":
+                                                    <span class="badge bg-primary">تم</span>
+                                                    break;
+                                                default:
+                                                    <span class="badge bg-secondary">@appointment.Status</span>
+                                                    break;
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted text-center">لا توجد مواعيد مسجلة</p>
+                }
+            </div>
+        </div>
+
+        <!-- Recent Treatments -->
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-procedures me-2"></i>العلاجات الأخيرة</h5>
+                <a asp-controller="Treatments" asp-action="Create" asp-route-patientId="@Model.PatientId" class="btn btn-sm btn-info">
+                    <i class="fas fa-plus me-1"></i>إضافة علاج
+                </a>
+            </div>
+            <div class="card-body">
+                @if (Model.Treatments.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>التاريخ</th>
+                                    <th>نوع العلاج</th>
+                                    <th>الطبيب</th>
+                                    <th>التكلفة</th>
+                                    <th>الحالة</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var treatment in Model.Treatments.OrderByDescending(t => t.TreatmentDate).Take(5))
+                                {
+                                    <tr>
+                                        <td>@treatment.TreatmentDate.ToString("dd/MM/yyyy")</td>
+                                        <td>@treatment.TreatmentType</td>
+                                        <td>@treatment.Dentist.FullName</td>
+                                        <td>@treatment.Cost.ToString("N0") ج.م</td>
+                                        <td>
+                                            @switch (treatment.Status)
+                                            {
+                                                case "مكتمل":
+                                                    <span class="badge bg-success">مكتمل</span>
+                                                    break;
+                                                case "جاري":
+                                                    <span class="badge bg-warning">جاري</span>
+                                                    break;
+                                                case "مؤجل":
+                                                    <span class="badge bg-secondary">مؤجل</span>
+                                                    break;
+                                                default:
+                                                    <span class="badge bg-info">@treatment.Status</span>
+                                                    break;
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted text-center">لا توجد علاجات مسجلة</p>
+                }
+            </div>
+        </div>
+
+        <!-- Recent Invoices -->
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-file-invoice me-2"></i>الفواتير الأخيرة</h5>
+                <a asp-controller="Invoices" asp-action="Create" asp-route-patientId="@Model.PatientId" class="btn btn-sm btn-warning">
+                    <i class="fas fa-plus me-1"></i>إنشاء فاتورة
+                </a>
+            </div>
+            <div class="card-body">
+                @if (Model.Invoices.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>رقم الفاتورة</th>
+                                    <th>التاريخ</th>
+                                    <th>المبلغ الإجمالي</th>
+                                    <th>المبلغ المدفوع</th>
+                                    <th>الحالة</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var invoice in Model.Invoices.OrderByDescending(i => i.InvoiceDate).Take(5))
+                                {
+                                    <tr>
+                                        <td>@invoice.InvoiceNumber</td>
+                                        <td>@invoice.InvoiceDate.ToString("dd/MM/yyyy")</td>
+                                        <td>@invoice.TotalAmount.ToString("N0") ج.م</td>
+                                        <td>@invoice.PaidAmount.ToString("N0") ج.م</td>
+                                        <td>
+                                            @switch (invoice.Status)
+                                            {
+                                                case "مدفوعة":
+                                                    <span class="badge bg-success">مدفوعة</span>
+                                                    break;
+                                                case "غير مدفوعة":
+                                                    <span class="badge bg-danger">غير مدفوعة</span>
+                                                    break;
+                                                case "مدفوعة جزئياً":
+                                                    <span class="badge bg-warning">مدفوعة جزئياً</span>
+                                                    break;
+                                                default:
+                                                    <span class="badge bg-secondary">@invoice.Status</span>
+                                                    break;
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted text-center">لا توجد فواتير مسجلة</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>

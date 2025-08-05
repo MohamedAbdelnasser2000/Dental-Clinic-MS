@@ -1,0 +1,160 @@
+@model DentalClinicSystem.Models.Appointment
+@{
+    ViewData["Title"] = "Delete Appointment";
+    Layout = "_DashboardLayout";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-trash me-2 text-danger"></i>Delete Appointment</h2>
+    <a asp-action="Index" class="btn btn-secondary">
+        <i class="fas fa-arrow-left me-2"></i>Back to List
+    </a>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Confirm Deletion</h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-danger">
+                    <h6><i class="fas fa-exclamation-triangle me-2"></i>تحذير!</h6>
+                    <p class="mb-0">هل أنت متأكد من أنك تريد حذف هذا الموعد نهائياً؟ سيتم حذف الموعد تماماً من قاعدة البيانات ولا يمكن التراجع عن هذا الإجراء!</p>
+                </div>
+                
+                <h6 class="mb-3">Appointment Details:</h6>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Patient:</label>
+                        <p class="form-control-plaintext">@Model.Patient?.FullName</p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Dentist:</label>
+                        <p class="form-control-plaintext">@Model.Dentist?.FullName</p>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Date:</label>
+                        <p class="form-control-plaintext">@Model.AppointmentDate.ToString("dddd, MMMM dd, yyyy")</p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Time:</label>
+                        <p class="form-control-plaintext">@Model.StartTime.ToString(@"hh\:mm") - @Model.EndTime.ToString(@"hh\:mm")</p>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Status:</label>
+                        <p class="form-control-plaintext">
+                            @if (Model.Status == "مؤكد")
+                            {
+                                <span class="badge bg-success">@Model.Status</span>
+                            }
+                            else if (Model.Status == "معلق")
+                            {
+                                <span class="badge bg-warning">@Model.Status</span>
+                            }
+                            else if (Model.Status == "ملغي")
+                            {
+                                <span class="badge bg-danger">@Model.Status</span>
+                            }
+                            else if (Model.Status == "مكتمل")
+                            {
+                                <span class="badge bg-info">@Model.Status</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">@Model.Status</span>
+                            }
+                        </p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Service:</label>
+                        <p class="form-control-plaintext">@(Model.Service?.ServiceName ?? "N/A")</p>
+                    </div>
+                </div>
+                
+                @if (!string.IsNullOrEmpty(Model.ReasonForVisit))
+                {
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label fw-bold">Reason for Visit:</label>
+                            <p class="form-control-plaintext">@Model.ReasonForVisit</p>
+                        </div>
+                    </div>
+                }
+                
+                @if (!string.IsNullOrEmpty(Model.Notes))
+                {
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label fw-bold">Notes:</label>
+                            <p class="form-control-plaintext">@Model.Notes</p>
+                        </div>
+                    </div>
+                }
+                
+                <div class="d-flex justify-content-end mt-4">
+                    <a asp-action="Details" asp-route-id="@Model.AppointmentId" class="btn btn-secondary me-2">
+                        <i class="fas fa-times me-2"></i>Cancel
+                    </a>
+                    <form asp-action="Delete" method="post" class="d-inline">
+                        <input type="hidden" asp-for="AppointmentId" />
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('هل أنت متأكد من الحذف النهائي؟ لا يمكن التراجع عن هذا الإجراء!')">
+                            <i class="fas fa-trash me-2"></i>حذف نهائي
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card border-warning">
+            <div class="card-header bg-warning text-dark">
+                <h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>Important Information</h6>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-danger">
+                    <h6><i class="fas fa-exclamation-triangle me-2"></i>ماذا يحدث عند الحذف النهائي:</h6>
+                    <ul class="mb-0 small">
+                        <li>سيتم حذف الموعد تماماً من قاعدة البيانات</li>
+                        <li>لن يكون بإمكانك استرجاع الموعد أو بياناته</li>
+                        <li>ستصبح الفترة الزمنية متاحة لحجوزات جديدة</li>
+                        <li>أي علاجات مرتبطة بالموعد ستبقى في النظام</li>
+                        <li>هذا الإجراء لا يمكن التراجع عنه!</li>
+                    </ul>
+                </div>
+                
+                <div class="alert alert-info">
+                    <h6><i class="fas fa-clock me-2"></i>Alternative Actions:</h6>
+                    <p class="mb-2 small">Instead of deleting, you might want to:</p>
+                    <ul class="mb-0 small">
+                        <li>Reschedule the appointment</li>
+                        <li>Change the status to "معلق" (Pending)</li>
+                        <li>Add notes about the cancellation reason</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="fas fa-user me-2"></i>Patient Contact</h6>
+            </div>
+            <div class="card-body">
+                @if (Model.Patient != null)
+                {
+                    <p class="small mb-1"><strong>Phone:</strong> @Model.Patient.PhoneNumber</p>
+                    <p class="small mb-1"><strong>Email:</strong> @Model.Patient.Email</p>
+                    <p class="small mb-0 text-muted">Consider notifying the patient about the cancellation.</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>

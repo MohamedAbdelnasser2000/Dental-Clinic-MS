@@ -1,0 +1,105 @@
+@{
+    ViewData["Title"] = "اختبار صفحة الحذف";
+    Layout = "_DashboardLayout";
+}
+
+<div class="container mt-4">
+    <h2>اختبار Modal الحذف</h2>
+    
+    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteConfirmModal">
+        <i class="fas fa-trash me-2"></i>اختبار حذف المريض
+    </button>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteConfirmModalLabel">
+                    <i class="fas fa-exclamation-triangle me-2"></i>تأكيد حذف المريض
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <div class="mb-4">
+                    <i class="fas fa-user-times fa-4x text-danger mb-3"></i>
+                    <h4 class="text-danger">هل أنت متأكد؟</h4>
+                    <p class="text-muted">
+                        سيتم حذف المريض <strong>"أحمد محمد"</strong> من النظام.
+                        <br>
+                        <small class="text-warning">
+                            <i class="fas fa-info-circle me-1"></i>
+                            ملاحظة: سيتم إلغاء تفعيل المريض وليس حذفه نهائياً، ويمكن استعادته لاحقاً.
+                        </small>
+                    </p>
+                </div>
+                
+                <div class="alert alert-warning" role="alert">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <strong>تحذير:</strong> هذا الإجراء سيؤثر على:
+                    <ul class="list-unstyled mt-2 mb-0">
+                        <li><i class="fas fa-check text-success me-2"></i>المواعيد المستقبلية ستبقى محفوظة</li>
+                        <li><i class="fas fa-check text-success me-2"></i>التاريخ الطبي سيبقى محفوظ</li>
+                        <li><i class="fas fa-check text-success me-2"></i>الفواتير السابقة ستبقى محفوظة</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i>إلغاء
+                </button>
+                <button type="button" class="btn btn-danger" onclick="alert('تم الحذف بنجاح!')">
+                    <i class="fas fa-trash me-2"></i>تأكيد الحذف
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .modal-dialog-centered {
+        display: flex;
+        align-items: center;
+        min-height: calc(100% - 1rem);
+    }
+    
+    .modal-content {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+    
+    .modal-header.bg-danger {
+        border-top-left-radius: 15px;
+        border-top-right-radius: 15px;
+    }
+    
+    .fa-user-times {
+        animation: pulse 2s infinite;
+    }
+    
+    @@keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+        100% { transform: scale(1); }
+    }
+    
+    .modal-backdrop {
+        background-color: rgba(0, 0, 0, 0.7);
+    }
+</style>
+
+@section Scripts {
+    <script>
+        // Auto focus on cancel button when modal opens
+        $('#deleteConfirmModal').on('shown.bs.modal', function () {
+            $(this).find('.btn-secondary').focus();
+        });
+        
+        // Add confirmation sound effect (optional)
+        $('#deleteConfirmModal').on('show.bs.modal', function () {
+            console.log('Delete confirmation modal opened');
+        });
+    </script>
+}

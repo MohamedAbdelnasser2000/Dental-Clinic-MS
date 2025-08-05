@@ -1,0 +1,180 @@
+@model DentalClinicSystem.Models.Patient
+@{
+    ViewData["Title"] = "حذف المريض";
+    Layout = "_DashboardLayout";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-user-times me-2 text-danger"></i>حذف المريض</h2>
+    <a asp-action="Index" class="btn btn-secondary">
+        <i class="fas fa-arrow-left me-2"></i>العودة للقائمة
+    </a>
+</div>
+
+<!-- Patient Information Card -->
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-user me-2"></i>معلومات المريض</h5>
+            </div>
+            <div class="card-body">
+                <!-- Patient Information Display -->
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <strong>الاسم الكامل:</strong>
+                        <p class="text-muted">@Model.FullName</p>
+                    </div>
+                    <div class="col-md-6">
+                        <strong>النوع:</strong>
+                        <p class="text-muted">@(Model.Gender == "Male" ? "ذكر" : Model.Gender == "Female" ? "أنثى" : Model.Gender)</p>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <strong>رقم الهاتف:</strong>
+                        <p class="text-muted">@(Model.PhoneNumber ?? "غير محدد")</p>
+                    </div>
+                    <div class="col-md-6">
+                        <strong>البريد الإلكتروني:</strong>
+                        <p class="text-muted">@(Model.Email ?? "غير محدد")</p>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <strong>الرقم القومي:</strong>
+                        <p class="text-muted">@(Model.NationalId ?? "غير محدد")</p>
+                    </div>
+                    <div class="col-md-6">
+                        <strong>تاريخ الميلاد:</strong>
+                        <p class="text-muted">@(Model.DateOfBirth?.ToString("dd/MM/yyyy") ?? "غير محدد")</p>
+                    </div>
+                </div>
+
+                @if (!string.IsNullOrEmpty(Model.Address))
+                {
+                    <div class="mb-3">
+                        <strong>العنوان:</strong>
+                        <p class="text-muted">@Model.Address</p>
+                    </div>
+                }
+
+                <div class="mb-3">
+                    <strong>تاريخ التسجيل:</strong>
+                    <p class="text-muted">@Model.RegistrationDate.ToString("dd/MM/yyyy hh:mm tt")</p>
+                </div>
+
+                <div class="d-flex justify-content-end">
+                    <a asp-action="Index" class="btn btn-secondary me-2">
+                        <i class="fas fa-arrow-left me-2"></i>العودة للقائمة
+                    </a>
+                    <a asp-action="Details" asp-route-id="@Model.PatientId" class="btn btn-info me-2">
+                        <i class="fas fa-eye me-2"></i>عرض التفاصيل
+                    </a>
+                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteConfirmModal">
+                        <i class="fas fa-trash me-2"></i>حذف المريض
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteConfirmModalLabel">
+                    <i class="fas fa-exclamation-triangle me-2"></i>تأكيد حذف المريض
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <div class="mb-4">
+                    <i class="fas fa-user-times fa-4x text-danger mb-3"></i>
+                    <h4 class="text-danger">هل أنت متأكد؟</h4>
+                    <p class="text-muted">
+                        سيتم حذف المريض <strong>"@Model.FullName"</strong> نهائياً من النظام.
+                        <br>
+                        <small class="text-danger">
+                            <i class="fas fa-exclamation-triangle me-1"></i>
+                            تحذير: هذا الحذف نهائي ولا يمكن التراجع عنه!
+                        </small>
+                    </p>
+                </div>
+
+                <div class="alert alert-danger" role="alert">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <strong>تحذير:</strong> سيتم حذف المريض نهائياً من النظام:
+                    <ul class="list-unstyled mt-2 mb-0">
+                        <li><i class="fas fa-times text-danger me-2"></i>لا يمكن استعادة المريض بعد الحذف</li>
+                        <li><i class="fas fa-times text-danger me-2"></i>سيتم حذف جميع البيانات المرتبطة</li>
+                        <li><i class="fas fa-times text-danger me-2"></i>هذا الإجراء لا يمكن التراجع عنه</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i>إلغاء
+                </button>
+                <form asp-action="Delete" method="post" class="d-inline">
+                    <input type="hidden" asp-for="PatientId" />
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash me-2"></i>حذف نهائي
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .modal-dialog-centered {
+        display: flex;
+        align-items: center;
+        min-height: calc(100% - 1rem);
+    }
+
+    .modal-content {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .modal-header.bg-danger {
+        border-top-left-radius: 15px;
+        border-top-right-radius: 15px;
+    }
+
+    .fa-user-times {
+        animation: pulse 2s infinite;
+    }
+
+    @@keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+        100% { transform: scale(1); }
+    }
+
+    .modal-backdrop {
+        background-color: rgba(0, 0, 0, 0.7);
+    }
+</style>
+
+@section Scripts {
+    <script>
+        // Auto focus on cancel button when modal opens
+        $('#deleteConfirmModal').on('shown.bs.modal', function () {
+            $(this).find('.btn-secondary').focus();
+        });
+
+        // Add confirmation sound effect (optional)
+        $('#deleteConfirmModal').on('show.bs.modal', function () {
+            // You can add a sound effect here if needed
+            console.log('Delete confirmation modal opened');
+        });
+    </script>
+}

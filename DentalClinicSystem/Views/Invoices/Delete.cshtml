@@ -1,0 +1,184 @@
+@model DentalClinicSystem.Models.Invoice
+@{
+    ViewData["Title"] = "Delete Invoice";
+    Layout = "_DashboardLayout";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-trash me-2 text-danger"></i>Delete Invoice</h2>
+    <a asp-action="Index" class="btn btn-secondary">
+        <i class="fas fa-arrow-left me-2"></i>Back to List
+    </a>
+</div>
+
+<div class="alert alert-danger">
+    <i class="fas fa-exclamation-triangle me-2"></i>
+    <strong>Warning!</strong> Are you sure you want to delete this invoice? This action cannot be undone.
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <!-- Invoice Information -->
+        <div class="card mb-4">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0"><i class="fas fa-file-invoice me-2"></i>Invoice to be Deleted</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <dl class="row">
+                            <dt class="col-sm-4">Invoice Number:</dt>
+                            <dd class="col-sm-8"><strong class="text-primary">@Model.InvoiceNumber</strong></dd>
+                            
+                            <dt class="col-sm-4">Invoice Date:</dt>
+                            <dd class="col-sm-8">@Model.InvoiceDate.ToString("dd/MM/yyyy")</dd>
+                            
+                            <dt class="col-sm-4">Due Date:</dt>
+                            <dd class="col-sm-8">@Model.DueDate.ToString("dd/MM/yyyy")</dd>
+                            
+                            <dt class="col-sm-4">Status:</dt>
+                            <dd class="col-sm-8">
+                                @switch (Model.Status)
+                                {
+                                    case "Paid":
+                                        <span class="badge bg-success">Paid</span>
+                                        break;
+                                    case "Unpaid":
+                                        <span class="badge bg-danger">Unpaid</span>
+                                        break;
+                                    case "Partially Paid":
+                                        <span class="badge bg-warning">Partially Paid</span>
+                                        break;
+                                    case "Overdue":
+                                        <span class="badge bg-dark">Overdue</span>
+                                        break;
+                                    default:
+                                        <span class="badge bg-secondary">@Model.Status</span>
+                                        break;
+                                }
+                            </dd>
+                        </dl>
+                    </div>
+                    <div class="col-md-6">
+                        <dl class="row">
+                            <dt class="col-sm-4">Patient:</dt>
+                            <dd class="col-sm-8">
+                                <i class="fas fa-user-circle me-2 text-muted"></i>
+                                @Model.Patient?.FullName
+                            </dd>
+                            
+                            <dt class="col-sm-4">Treatment:</dt>
+                            <dd class="col-sm-8">
+                                @if (Model.Treatment != null)
+                                {
+                                    <span>@Model.Treatment.TreatmentType</span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">No treatment linked</span>
+                                }
+                            </dd>
+                            
+                            <dt class="col-sm-4">Created:</dt>
+                            <dd class="col-sm-8">@Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</dd>
+
+                            <dt class="col-sm-4">Updated:</dt>
+                            <dd class="col-sm-8">
+                                @if (Model.UpdatedAt.HasValue)
+                                {
+                                    @Model.UpdatedAt.Value.ToString("dd/MM/yyyy HH:mm")
+                                }
+                                else
+                                {
+                                    <span class="text-muted">Never</span>
+                                }
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+                
+                @if (!string.IsNullOrEmpty(Model.Notes))
+                {
+                    <hr>
+                    <div class="row">
+                        <div class="col-12">
+                            <dt>Notes:</dt>
+                            <dd class="mt-2">
+                                <div class="alert alert-light">
+                                    @Model.Notes
+                                </div>
+                            </dd>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <!-- Financial Summary -->
+        <div class="card mb-4">
+            <div class="card-header bg-warning">
+                <h5 class="mb-0"><i class="fas fa-calculator me-2"></i>Financial Summary</h5>
+            </div>
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-6">Total Amount:</dt>
+                    <dd class="col-6 text-end"><strong>$@Model.TotalAmount.ToString("N2")</strong></dd>
+                    
+                    <dt class="col-6">Discount:</dt>
+                    <dd class="col-6 text-end text-success">-$@Model.DiscountAmount.ToString("N2")</dd>
+                    
+                    <dt class="col-6">Insurance:</dt>
+                    <dd class="col-6 text-end text-info">-$@Model.InsuranceAmount.ToString("N2")</dd>
+                    
+                    <dt class="col-6">Paid Amount:</dt>
+                    <dd class="col-6 text-end text-success">$@Model.PaidAmount.ToString("N2")</dd>
+                </dl>
+                
+                <hr>
+                
+                <dl class="row">
+                    <dt class="col-6"><strong>Remaining:</strong></dt>
+                    <dd class="col-6 text-end">
+                        @{
+                            var remaining = Model.TotalAmount - Model.DiscountAmount - Model.InsuranceAmount - Model.PaidAmount;
+                        }
+                        @if (remaining > 0)
+                        {
+                            <strong class="text-danger">$@remaining.ToString("N2")</strong>
+                        }
+                        else
+                        {
+                            <strong class="text-success">$0.00</strong>
+                        }
+                    </dd>
+                </dl>
+            </div>
+        </div>
+        
+        <!-- Delete Confirmation -->
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Confirm Deletion</h5>
+            </div>
+            <div class="card-body">
+                <p class="text-danger mb-3">
+                    <strong>This action is permanent and cannot be undone!</strong>
+                </p>
+                
+                <form asp-action="Delete" method="post">
+                    <input type="hidden" asp-for="InvoiceId" />
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-trash me-2"></i>Yes, Delete Invoice
+                        </button>
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="fas fa-times me-2"></i>Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

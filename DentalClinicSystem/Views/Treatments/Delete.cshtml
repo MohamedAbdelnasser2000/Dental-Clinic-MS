@@ -1,0 +1,198 @@
+@model DentalClinicSystem.Models.Treatment
+@{
+    ViewData["Title"] = "Delete Treatment";
+    Layout = "_DashboardLayout";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-trash me-2 text-danger"></i>Delete Treatment</h2>
+    <a asp-action="Index" class="btn btn-secondary">
+        <i class="fas fa-arrow-left me-2"></i>Back to List
+    </a>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Confirm Treatment Deletion</h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-danger">
+                    <h6><i class="fas fa-exclamation-triangle me-2"></i>Warning!</h6>
+                    <p class="mb-0">Are you sure you want to permanently delete this treatment? The treatment will be completely removed from the database and this action cannot be undone!</p>
+                </div>
+
+                <!-- Treatment Details -->
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Treatment ID:</label>
+                        <p class="form-control-plaintext">@Model.TreatmentId</p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Treatment Type:</label>
+                        <p class="form-control-plaintext">@Model.TreatmentType</p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Treatment Date:</label>
+                        <p class="form-control-plaintext">@Model.TreatmentDate.ToString("MMM dd, yyyy")</p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Cost:</label>
+                        <p class="form-control-plaintext">@Model.Cost.ToString("C")</p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Status:</label>
+                        <p class="form-control-plaintext">
+                            @if (Model.Status == "Completed" || Model.Status == "مكتمل")
+                            {
+                                <span class="badge bg-success">@Model.Status</span>
+                            }
+                            else if (Model.Status == "In Progress" || Model.Status == "قيد التنفيذ")
+                            {
+                                <span class="badge bg-warning">@Model.Status</span>
+                            }
+                            else if (Model.Status == "Scheduled" || Model.Status == "مجدول")
+                            {
+                                <span class="badge bg-info">@Model.Status</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">@Model.Status</span>
+                            }
+                        </p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Duration:</label>
+                        <p class="form-control-plaintext">@(Model.DurationMinutes?.ToString() ?? "Not specified") minutes</p>
+                    </div>
+                </div>
+
+                @if (!string.IsNullOrEmpty(Model.Description))
+                {
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Description:</label>
+                        <p class="form-control-plaintext">@Model.Description</p>
+                    </div>
+                }
+
+                @if (!string.IsNullOrEmpty(Model.Notes))
+                {
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Notes:</label>
+                        <p class="form-control-plaintext">@Model.Notes</p>
+                    </div>
+                }
+
+                @if (!string.IsNullOrEmpty(Model.TeethTreated))
+                {
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Teeth Treated:</label>
+                        <p class="form-control-plaintext">@Model.TeethTreated</p>
+                    </div>
+                }
+
+                <hr class="my-4">
+
+                <!-- Confirmation Form -->
+                <form asp-action="Delete" method="post">
+                    <input type="hidden" asp-for="TreatmentId" />
+                    
+                    <div class="d-flex justify-content-end gap-2">
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Cancel
+                        </a>
+                        <a asp-action="Details" asp-route-id="@Model.TreatmentId" class="btn btn-info">
+                            <i class="fas fa-eye me-2"></i>View Details
+                        </a>
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to permanently delete this treatment? This action cannot be undone!')">
+                            <i class="fas fa-trash me-2"></i>Delete Permanently
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <!-- Patient Information -->
+        <div class="card mb-3">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="fas fa-user me-2"></i>Patient Information</h6>
+            </div>
+            <div class="card-body">
+                @if (Model.Patient != null)
+                {
+                    <p class="mb-1"><strong>Name:</strong> @Model.Patient.FullName</p>
+                    <p class="mb-1"><strong>Phone:</strong> @Model.Patient.Phone</p>
+                    <p class="mb-0"><strong>Age:</strong> @(Model.Patient.DateOfBirth.HasValue ? (DateTime.Now.Year - Model.Patient.DateOfBirth.Value.Year) : 0) years</p>
+                    <a asp-controller="Patients" asp-action="Details" asp-route-id="@Model.PatientId" class="btn btn-sm btn-outline-primary mt-2">
+                        <i class="fas fa-eye me-1"></i>View Patient Profile
+                    </a>
+                }
+                else
+                {
+                    <p class="text-muted">Patient information not available</p>
+                }
+            </div>
+        </div>
+
+        <!-- Dentist Information -->
+        <div class="card mb-3">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="fas fa-user-md me-2"></i>Dentist Information</h6>
+            </div>
+            <div class="card-body">
+                @if (Model.Dentist != null)
+                {
+                    <p class="mb-1"><strong>Name:</strong> @Model.Dentist.FullName</p>
+                    <p class="mb-1"><strong>Specialization:</strong> @Model.Dentist.Specialization</p>
+                    <p class="mb-0"><strong>Phone:</strong> @Model.Dentist.Phone</p>
+                    <a asp-controller="Dentists" asp-action="Details" asp-route-id="@Model.DentistId" class="btn btn-sm btn-outline-primary mt-2">
+                        <i class="fas fa-eye me-1"></i>View Dentist Profile
+                    </a>
+                }
+                else
+                {
+                    <p class="text-muted">Dentist information not available</p>
+                }
+            </div>
+        </div>
+
+        <!-- Warning Information -->
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white">
+                <h6 class="mb-0"><i class="fas fa-exclamation-triangle me-2"></i>What happens when permanently deleted:</h6>
+            </div>
+            <div class="card-body">
+                <ul class="mb-0 small">
+                    <li>The treatment will be completely removed from the database</li>
+                    <li>You will not be able to recover the treatment or its data</li>
+                    <li>All notes and related details will be lost</li>
+                    <li>Patient and dentist profiles will remain unaffected</li>
+                    <li>This action cannot be undone!</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Timestamps -->
+        <div class="card mt-3">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="fas fa-clock me-2"></i>System Information</h6>
+            </div>
+            <div class="card-body">
+                <p class="small mb-1"><strong>Created At:</strong> @Model.CreatedAt.ToString("MMM dd, yyyy hh:mm tt")</p>
+                @if (Model.UpdatedAt.HasValue)
+                {
+                    <p class="small mb-0"><strong>Last Updated:</strong> @Model.UpdatedAt.Value.ToString("MMM dd, yyyy hh:mm tt")</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.border-danger {
+    border-color: #dc3545 !important;
+}
+</style>

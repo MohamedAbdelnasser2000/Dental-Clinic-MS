@@ -1,0 +1,196 @@
+@model IEnumerable<DentalClinicSystem.Models.Portfolio>
+@{
+    ViewData["Title"] = "Portfolio Management";
+    Layout = "_DashboardLayout";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-images me-2"></i>Portfolio Management</h2>
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="fas fa-plus me-2"></i>Add New Portfolio Item
+    </a>
+</div>
+
+<!-- Filters -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label">Search</label>
+                <input type="text" name="searchString" value="@ViewBag.SearchString" class="form-control" placeholder="Search by title or description...">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Category</label>
+                <select name="category" class="form-select">
+                    <option value="">All Categories</option>
+                    @if (ViewBag.Categories != null)
+                    {
+                        @foreach (var category in (List<string>)ViewBag.Categories)
+                        {
+                            <option value="@category" selected="@(ViewBag.Category == category)">@category</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Page Size</label>
+                <select name="pageSize" class="form-select">
+                    <option value="10" selected="@(ViewBag.PageSize == 10)">10</option>
+                    <option value="25" selected="@(ViewBag.PageSize == 25)">25</option>
+                    <option value="50" selected="@(ViewBag.PageSize == 50)">50</option>
+                </select>
+            </div>
+            <div class="col-md-3 d-flex align-items-end">
+                <button type="submit" class="btn btn-outline-primary me-2">
+                    <i class="fas fa-search me-2"></i>Search
+                </button>
+                <a href="@Url.Action("Index")" class="btn btn-outline-secondary">
+                    <i class="fas fa-times me-2"></i>Clear
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Portfolio Items -->
+<div class="row">
+    @if (Model.Any())
+    {
+        @foreach (var item in Model)
+        {
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card h-100 shadow-sm">
+                    @if (!string.IsNullOrEmpty(item.ImagePath))
+                    {
+                        <img src="@item.ImagePath" class="card-img-top" alt="@item.Title" style="height: 200px; object-fit: cover;">
+                    }
+                    else if (!string.IsNullOrEmpty(item.BeforeImagePath))
+                    {
+                        <div class="row g-0">
+                            <div class="col-6">
+                                <img src="@item.BeforeImagePath" class="img-fluid" alt="Before" style="height: 200px; object-fit: cover; width: 100%;">
+                                <div class="position-absolute top-0 start-0 bg-dark bg-opacity-75 text-white px-2 py-1 small">Before</div>
+                            </div>
+                            @if (!string.IsNullOrEmpty(item.AfterImagePath))
+                            {
+                                <div class="col-6 position-relative">
+                                    <img src="@item.AfterImagePath" class="img-fluid" alt="After" style="height: 200px; object-fit: cover; width: 100%;">
+                                    <div class="position-absolute top-0 end-0 bg-success bg-opacity-75 text-white px-2 py-1 small">After</div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                            <i class="fas fa-image fa-3x text-muted"></i>
+                        </div>
+                    }
+                    
+                    <div class="card-body d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <span class="badge bg-primary">@item.Category</span>
+                            <div>
+                                @if (item.IsFeatured)
+                                {
+                                    <span class="badge bg-warning text-dark">Featured</span>
+                                }
+                                @if (!item.IsActive)
+                                {
+                                    <span class="badge bg-secondary">Inactive</span>
+                                }
+                            </div>
+                        </div>
+                        
+                        <h5 class="card-title">@item.Title</h5>
+                        <p class="card-text text-muted flex-grow-1">
+                            @(item.Description.Length > 100 ? item.Description.Substring(0, 100) + "..." : item.Description)
+                        </p>
+                        
+                        @if (!string.IsNullOrEmpty(item.TreatmentType))
+                        {
+                            <small class="text-muted mb-2">
+                                <i class="fas fa-tooth me-1"></i>@item.TreatmentType
+                            </small>
+                        }
+                        
+                        @if (!string.IsNullOrEmpty(item.PatientAge))
+                        {
+                            <small class="text-muted mb-2">
+                                <i class="fas fa-user me-1"></i>Age: @item.PatientAge
+                            </small>
+                        }
+                        
+                        <div class="d-flex justify-content-between align-items-center mt-auto">
+                            <small class="text-muted">
+                                Order: @item.DisplayOrder
+                            </small>
+                            <div class="btn-group" role="group">
+                                <a asp-action="Details" asp-route-id="@item.PortfolioId" class="btn btn-sm btn-outline-info" title="View Details">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a asp-action="Edit" asp-route-id="@item.PortfolioId" class="btn btn-sm btn-outline-warning" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a asp-action="Delete" asp-route-id="@item.PortfolioId" class="btn btn-sm btn-outline-danger" title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="col-12">
+            <div class="text-center py-5">
+                <i class="fas fa-images fa-3x text-muted mb-3"></i>
+                <h4 class="text-muted">No Portfolio Items Found</h4>
+                <p class="text-muted">Start building your portfolio by adding your first item.</p>
+                <a asp-action="Create" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>Add First Portfolio Item
+                </a>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Pagination -->
+@if (ViewBag.TotalPages > 1)
+{
+    <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+            @if (ViewBag.CurrentPage > 1)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="?page=@(ViewBag.CurrentPage - 1)&searchString=@ViewBag.SearchString&category=@ViewBag.Category&pageSize=@ViewBag.PageSize">Previous</a>
+                </li>
+            }
+
+            @for (int i = Math.Max(1, ViewBag.CurrentPage - 2); i <= Math.Min(ViewBag.TotalPages, ViewBag.CurrentPage + 2); i++)
+            {
+                <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                    <a class="page-link" href="?page=@i&searchString=@ViewBag.SearchString&category=@ViewBag.Category&pageSize=@ViewBag.PageSize">@i</a>
+                </li>
+            }
+
+            @if (ViewBag.CurrentPage < ViewBag.TotalPages)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="?page=@(ViewBag.CurrentPage + 1)&searchString=@ViewBag.SearchString&category=@ViewBag.Category&pageSize=@ViewBag.PageSize">Next</a>
+                </li>
+            }
+        </ul>
+    </nav>
+}
+
+@section Scripts {
+    <script>
+        // Auto-submit form on page size change
+        document.querySelector('select[name="pageSize"]').addEventListener('change', function() {
+            this.form.submit();
+        });
+    </script>
+}
